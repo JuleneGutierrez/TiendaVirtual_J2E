@@ -5,12 +5,18 @@
  */
 package controlador;
 
+import conexion.Conexion;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.ConnectException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -30,17 +36,67 @@ public class ServerControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ServerControlador</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ServerControlador at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+
+        PrintWriter out = response.getWriter();
+
+        /*Aquí se obtiene una sesión HTTP asociada con la solicitud actual. Si no hay una sesión existente,
+        se crea una nueva. El parámetro true indica que se debe crear una nueva sesión si no existe una sesión actual.*/
+        HttpSession session = request.getSession(true);
+
+        /*Creamos una instancia de la clase conexion*/
+        Conexion conexion = new Conexion();
+
+        /*Usamos la interfaz RequestDispatcher  para reenviar la solicitud al resto de servlet o jsp */
+        RequestDispatcher rd = null;
+
+        try {
+
+            /*Creamos una variable para guardar la ruta hacia donde se redirigira al usuario*/
+            String ruta = "";
+
+            /*Recojo el value de los botones de login y registro y en funcion de cual*/
+           
+           String botonSeleccionado = request.getParameter("enviar");
+            
+           
+            if ("Entrar".equals(botonSeleccionado)) {
+                // Obtener los parámetros del formulario JSP
+                String usuario = request.getParameter("usuario");
+                String contrasena = request.getParameter("contrasena");
+
+                /*Usamos el objeto de Tipo Connection para conectar a la bbdd y usamos el  metodo conectarBd*/
+                conexion.conectarBD();
+
+                /*Obtengo la respuesta a la consulta realizada con el metodo verCredenciales pasando por parametro el usuario y 
+                la contraseña recogidas del form Y LO RECOJE EL OBJETO RESULTSET*/
+                ResultSet resultSet = conexion.verCredencial(usuario, contrasena);
+
+                try {
+                    /*Si al menos hay un registro coincidente entra en el if*/
+                    if (resultSet.next()) {
+
+                        String rol = resultSet.getString("rol");
+                        out.println("¡Credenciales válidas!");
+                        //out.println(rol);
+
+                         ruta = "/menu.jsp";
+                        // System.out.println("Ruta de redirección: " + ruta);
+                    } else {
+
+                        // ruta = "/menu.jsp";
+                        // out.println("¡Credenciales inválidas!");
+                    }
+                } catch (SQLException ex) {
+                    // Manejar la excepción aquí
+                    ex.printStackTrace(); // Imprimir la traza de la excepción (solo para propósitos de depuración)
+                }
+            }
+
+            rd = getServletContext().getRequestDispatcher(ruta);
+            rd.forward(request, response);
+
+        } finally {
+            out.close();
         }
     }
 

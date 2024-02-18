@@ -1,6 +1,6 @@
 <%-- 
-    Document   : index
-    Created on : 18-feb-2024, 13:04:00
+    Document   : menu
+    Created on : 18-feb-2024, 19:57:50
     Author     : Julencia
 --%>
 
@@ -12,6 +12,9 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>MENÚ</h1>
+        
+        
+        
     </body>
 </html>
