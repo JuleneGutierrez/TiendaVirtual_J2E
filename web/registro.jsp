@@ -1,8 +1,3 @@
-<%-- 
-    Document   : registro.jsp
-    Created on : 18-feb-2024, 15:58:15
-    Author     : alvar
---%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
