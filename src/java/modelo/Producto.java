@@ -45,6 +45,38 @@ public class Producto extends HttpServlet {
             out.println("</html>");
         }
     }
+    private String titulo;
+    private boolean precio;
+    private int cantidad;
+    public Producto(String consTitulo,boolean consPrecio, int consCantidad) {
+        this.titulo=consTitulo;
+         this.precio=consPrecio;
+          this.cantidad=consCantidad;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public boolean isPrecio() {
+        return precio;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setPrecio(boolean precio) {
+        this.precio = precio;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
