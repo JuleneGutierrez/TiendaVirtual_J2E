@@ -22,7 +22,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author Julencia
  */
-public class ServerControlador extends HttpServlet {
+public class ServerControlador extends HttpServlet
+{
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,7 +35,8 @@ public class ServerControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         response.setContentType("text/html;charset=UTF-8");
 
         PrintWriter out = response.getWriter();
@@ -49,17 +51,17 @@ public class ServerControlador extends HttpServlet {
         /*Usamos la interfaz RequestDispatcher  para reenviar la solicitud al resto de servlet o jsp */
         RequestDispatcher rd = null;
 
-        try {
+        try
+        {
 
             /*Creamos una variable para guardar la ruta hacia donde se redirigira al usuario*/
             String ruta = "";
 
             /*Recojo el value de los botones de login y registro y en funcion de cual*/
-           
-           String botonSeleccionado = request.getParameter("enviar");
-            
-           
-            if ("Entrar".equals(botonSeleccionado)) {
+            String botonSeleccionado = request.getParameter("enviar");
+
+            if ("Entrar".equals(botonSeleccionado))
+            {
                 // Obtener los parámetros del formulario JSP
                 String usuario = request.getParameter("usuario");
                 String contrasena = request.getParameter("contrasena");
@@ -71,31 +73,36 @@ public class ServerControlador extends HttpServlet {
                 la contraseña recogidas del form Y LO RECOJE EL OBJETO RESULTSET*/
                 ResultSet resultSet = conexion.verCredencial(usuario, contrasena);
 
-                try {
+                try
+                {
                     /*Si al menos hay un registro coincidente entra en el if*/
-                    if (resultSet.next()) {
+                    if (resultSet.next())
+                    {
 
                         String rol = resultSet.getString("rol");
                         out.println("¡Credenciales válidas!");
-                        //out.println(rol);
 
-                         ruta = "/menu.jsp";
-                        // System.out.println("Ruta de redirección: " + ruta);
-                    } else {
+                        ruta = "/menu.jsp";
 
-                        // ruta = "/menu.jsp";
-                        // out.println("¡Credenciales inválidas!");
+                    } else
+                    {
+
+                        ruta = "/login.jsp";
+
                     }
-                } catch (SQLException ex) {
+                } catch (SQLException ex)
+                {
                     // Manejar la excepción aquí
                     ex.printStackTrace(); // Imprimir la traza de la excepción (solo para propósitos de depuración)
                 }
             }
 
+            /*Redirigo la peticion */
             rd = getServletContext().getRequestDispatcher(ruta);
             rd.forward(request, response);
 
-        } finally {
+        } finally
+        {
             out.close();
         }
     }
@@ -111,7 +118,8 @@ public class ServerControlador extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -125,7 +133,8 @@ public class ServerControlador extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
         processRequest(request, response);
     }
 
@@ -135,7 +144,8 @@ public class ServerControlador extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo()
+    {
         return "Short description";
     }// </editor-fold>
 
