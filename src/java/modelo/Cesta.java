@@ -5,7 +5,9 @@
  */
 package modelo;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,20 +34,46 @@ public class Cesta extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Cesta</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Cesta at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+        
+    
     }
+    private Producto[] productos;
 
+        // Constructor
+        public Cesta(Producto[] productos) {
+            this.productos = productos;
+        }
+        public Cesta( ) {
+            this.productos = new Producto[0];
+        }
+
+        // Métodos para acceder y manipular el array de productos
+        public Producto[] getProductos() {
+            return productos;
+        }
+
+        public void setProductos(Producto[] productos) {
+            this.productos = productos;
+        }
+        
+    public void agregarProducto(Producto pProducto){
+        this.productos[this.productos.length] = pProducto;
+    }
+    public Producto[] serialize(){
+        return productos;
+    }
+    public void unserialize(byte[] data) {
+    try {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+        this.productos = (Producto[]) objectInputStream.readObject();
+        objectInputStream.close();
+    } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+    }
+}
+
+        
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
