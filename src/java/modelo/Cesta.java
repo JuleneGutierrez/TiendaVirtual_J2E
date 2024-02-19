@@ -39,7 +39,7 @@ public class Cesta extends HttpServlet {
     }
     private Producto[] productos;
 
-        // Constructor
+        // Constructores
         public Cesta(Producto[] productos) {
             this.productos = productos;
         }
@@ -47,31 +47,45 @@ public class Cesta extends HttpServlet {
             this.productos = new Producto[0];
         }
 
-        // Métodos para acceder y manipular el array de productos
+        // Método getter para acceder al array
         public Producto[] getProductos() {
             return productos;
         }
-
+        // Método setter para modificar el array
         public void setProductos(Producto[] productos) {
             this.productos = productos;
         }
-        
-    public void agregarProducto(Producto pProducto){
-        this.productos[this.productos.length] = pProducto;
-    }
-    public Producto[] serialize(){
-        return productos;
-    }
-    public void unserialize(byte[] data) {
-    try {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        this.productos = (Producto[]) objectInputStream.readObject();
-        objectInputStream.close();
-    } catch (IOException | ClassNotFoundException e) {
-        e.printStackTrace();
-    }
-}
+        /* Creamos un metodo en la clase cesta para agregar nuevos libros */
+        public void agregarProducto(Producto pProducto){
+            this.productos[this.productos.length] = pProducto;
+        }
+        // Implementación del método serialize
+        public Producto[] serialize(){
+            return productos;
+        }
+        // Implementación del método unserialize
+        public void deserializar(byte[] datos) {
+            try {
+                ByteArrayInputStream entradaBytes = new ByteArrayInputStream(datos);
+                ObjectInputStream entradaObjetos = new ObjectInputStream(entradaBytes);
+                this.productos = (Producto[]) entradaObjetos.readObject();
+                entradaObjetos.close();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        // Método para buscar un producto determinado por título
+        // Si encuentra coincidencias dentro del array, retorna el producto
+        // Si no encuentra ninguna coincidencia, retorna null 
+        public Producto buscarProductoPorTitulo(String tituloDelProducto) {
+            for (Producto producto : this.productos) {
+                if (producto.obtenerTitulo().equals(tituloDelProducto)) {
+                    return producto;
+                }
+            }
+            return null;
+        }
+    
 
         
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
