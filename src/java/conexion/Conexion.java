@@ -132,7 +132,7 @@ public class Conexion extends HttpServlet {
             stmt = conexion.createStatement();
 
             // Paso 4: Ejecutar las sentencias SQL a traves de los objetos Statement
-            String sqlStr = "SELECT usuario, contrasena,rol FROM usuario WHERE usuario = '" + usuario + "' AND contrasena = '" + contrasena + "'";
+            String sqlStr = "SELECT * FROM usuario WHERE usuario = '" + usuario + "' AND contrasena = '" + contrasena + "'";
 
             /*Se almacenan los datos en el objeto ResultSet*/
             ResultSet rset = stmt.executeQuery(sqlStr);
