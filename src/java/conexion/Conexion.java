@@ -117,7 +117,8 @@ public class Conexion extends HttpServlet {
     
     
        
-    /*Metodo usado HACER CONSULTA*/
+    /*Metodo usado HACER CONSULTA
+    COMENTARIO DE PRUEBA*/
     public ResultSet verCredencial(String usuario, String contrasena)
     {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
