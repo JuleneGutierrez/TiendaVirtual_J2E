@@ -21,7 +21,7 @@
             Contraseña:
             <input type="password" name="contrasena" value=""/><br><br>
             
-            <input type="submit" value="Registro" name="enviar"/>
+            <input type="submit" value="Registrarse" name="enviar"/>
             <input type="submit" value="Entrar" name="enviar"/>
 
         </form>
