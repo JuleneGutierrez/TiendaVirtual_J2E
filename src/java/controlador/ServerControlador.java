@@ -75,18 +75,41 @@ public class ServerControlador extends HttpServlet
 
                 try
                 {
-                    /*Si al menos hay un registro coincidente entra en el if*/
+                    /*Si al menos hay un registro coincidente entra en el if, es decir recorremos el registro devuelto*/
                     if (resultSet.next())
                     {
-
+                        /*En caso de que sea asi obtenemos el rol de ese usuario y el nombre*/
                         String rol = resultSet.getString("rol");
-                        out.println("¡Credenciales válidas!");
+                        String nombrePers = resultSet.getString("nombre");
+                        String idUsuario = resultSet.getString("id_usuario");
+                        String usuariolog = resultSet.getString("usuario");
+                        
+                        /*Guardo en una variable de sesion el rol del usuario y su nombre*/
+                        session.setAttribute("rol", rol);
+                        session.setAttribute("nombre", nombrePers);
+                        session.setAttribute("usuario", usuariolog);
+                        
+                        /*COMPROBACIONES DE FUNCIONAMIENTO*/
+                        System.out.println("¡Credenciales válidas!");
+                        System.out.println(rol);
+                        System.out.println(nombrePers);
+                        System.out.println(idUsuario);
+                        
+                        /*Al igual que en php desde aqui ya redirigimos al usuario en caso de ser rol invitado*/
+                        if("invitado".equals(rol))
+                        {
+                             ruta = "/previsualizacion.jsp";
+                        }else
+                        {
+                            /*En caso de que sea cualquier otro rol se ira al menu*/
+                            ruta = "/menu.jsp";
+                        }
 
-                        ruta = "/menu.jsp";
+                        
 
                     } else
                     {
-
+                        System.out.println("¡Credenciales INCORRECTAS!");
                         ruta = "/login.jsp";
 
                     }
@@ -95,7 +118,41 @@ public class ServerControlador extends HttpServlet
                     // Manejar la excepción aquí
                     ex.printStackTrace(); // Imprimir la traza de la excepción (solo para propósitos de depuración)
                 }
+            } else if ("Registrarse".equals(botonSeleccionado))
+            {
+                ruta = "/registro.jsp";
+
+            } else if ("Confirmar".equals(botonSeleccionado))
+            {
+
+                /*Recojo todos los datos del formulario*/
+                String nombre = request.getParameter("nombre");
+                String apellido = request.getParameter("apellido");
+                String nombreRegistro = request.getParameter("usuario");
+                String contrasena = request.getParameter("contrasena");
+                String email = request.getParameter("email");
+                String telefono = request.getParameter("telefono");
+                String dni = request.getParameter("dni");
+
+                /*Pruebas de que funciona el recojer los datos del form*/
+                System.out.println(nombre);
+                System.out.println(apellido);
+                System.out.println(nombreRegistro);
+                System.out.println(contrasena);
+                System.out.println(email);
+                System.out.println(telefono);
+                System.out.println(dni);
+
+                /*Utilizamos el metodo creado insertarUsuario y le pasamos por parametro las variables con los datos recogidos del formulario*/
+                conexion.insertarUsuario(nombre, apellido, nombreRegistro, contrasena, email, telefono, dni);
+
+                ruta = "/menu.jsp";
+
+            }else if("Comprar".equals(botonSeleccionado))
+            {
+                ruta = "/catalogo.jsp";
             }
+
 
             /*Redirigo la peticion */
             rd = getServletContext().getRequestDispatcher(ruta);
