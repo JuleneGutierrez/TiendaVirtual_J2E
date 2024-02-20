@@ -50,8 +50,8 @@ public class Producto extends HttpServlet {
     private int cantidad;
     public Producto(String consTitulo,boolean consPrecio, int consCantidad) {
         this.titulo=consTitulo;
-         this.precio=consPrecio;
-          this.cantidad=consCantidad;
+        this.precio=consPrecio;
+        this.cantidad=consCantidad;
     }
 
     public String getTitulo() {
