@@ -7,7 +7,7 @@
         <title>Registro</title>
     </head>
     <body>
-        <form name="registroForm" action="serverControlador" method="POST" enctype="multipart/form-data">
+        <form method="POST" action="ServerControlador">
 
             <h1>Nuevo Registro</h1>
             <br><br>
@@ -42,7 +42,11 @@
             <input type="tel" id="telefono" name="telefono" pattern="[6789]\d{8}" placeholder="Ej. 612345678" required>
             <br><br>
             
-            <input type="submit" value="Registrar" name="enviar" /><br><br>
-        
+            DNI:<br><br>
+            <input type="text" id="dni" name="dni">
+            <br><br>
+            
+            <input type="submit" value="Confirmar" name="enviar" /><br><br>
+        </form>
     </body>
 </html>
