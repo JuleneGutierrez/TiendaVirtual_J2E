@@ -4,6 +4,7 @@
     Author     : Julencia
 --%>
 
+<%@page import="modelo.GestionCesta"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="modelo.Cesta"%>
@@ -94,7 +95,7 @@
 
 
         <%
-
+            
             String botonSeleccionado = request.getParameter("enviar");
             if ("agregar".equals(botonSeleccionado))
             {
@@ -104,50 +105,36 @@
                 /*Creamos una nueva cesta */
                 Cesta nuevaCesta = new Cesta();
 
-                //String[] cantidades = request.getParameterValues("cantidad[]");
-                //out.print(cantidades);
-                // Obtener los parámetros del request
-                
-                /*Usamos la interfaz para definir que los parametros que le pasamos desde el fot (en el name, titulo y precio) y en value la cantidad para que se
-                almacenen de forma clave-valor */
-                Map<String, String[]> parametros = request.getParameterMap();
+                /*Creamos un objetos gestioCesta que */
+                GestionCesta gestionCesta = new GestionCesta();
 
-                /*Con este "foreach" obtenemos del map las claves compuestas como hemos mencionado con el titulo y precio*/
-                for (String clave : parametros.keySet())
+                /* Llamo a la funcion catalogoProducto y le paso como parametro las claves valor de todo el formulario, esta funcion me devuelve un ArrayList con los productos */
+                ArrayList<Producto> arrayProductos = gestionCesta.catalogoProducto(request.getParameterMap());
+
+                /* Imprimo los productos para comprobar que funciona */
+                if (arrayProductos.size()>0)
                 {
+                    out.print(arrayProductos);
                     
-                    /*Entra en el if si el parametro extraido comienza por cantidad[, ya que en realida estamos recogiendo todas las claves de los input*/
-                    if (clave.startsWith("cantidad["))
-                    {
-                        /*Creamos un array de tipo String, ahora en este caso para guardar la cantidad real de libros que quiere comprar el usuario,
-                        para ello usamos el metodo get y le damos la clave sobre la cual queremos el valor, es decir la cantidad de libros.*/
-                        String[] valores = parametros.get(clave);
-                        
-                        /*Si hemo podido obetener el valor en el array anterior, entra en este if */
-                        if (valores.length > 0)
-                        {
-                            String[] partesClave = clave.substring(9).split(" | ");
-                            /*Creamos variable para guardar el nombre del libro, utilizando el metodo substring para extraer de la clave solo el nombre*/
-                            // Obtener el nombre del libro desde el nombre del parámetro
-                            String nombreLibro = partesClave[0];
-                            // Obtener el precio del libro desde el nombre del parámetro
-                            String precioLibro =  partesClave[2].replace("]", " ");
-                            // Obtener la cantidad del libro del array de valores
-                            int cantidad = Integer.parseInt(valores[0]);
-                            
-                            
-                            if(cantidad > 0)
-                            {
-                               // nuevaCesta.agregarProducto(new Producto(nombreLibro, Integer.parseInt(precioLibro), cantidad));
-                                out.println(nombreLibro);
-                                out.println(precioLibro);
-                                out.println(cantidad);
-                            }
-                        }
-                    }
+                    //nuevaCesta.agregarProducto(producto);
+                    
+                    /*Agregar los productos a la cesta, con un for que recorra el arrayProductos y que meta en la cesta nuevaCesta esos productos
+                    Despues de esto generar la tabla , cargando la nuevaCesta en las columnas,  y en esta tabla añadir una nueva columna con un select para eliminar,
+                    despues, en la clase GestionCesta*/
+                    
+                    /*EN EL METODO DE AGREGAR INTRODUCTO EL METODO BUSCAR Y SI EXISTE EL OBJETO PRODUCTO POR TITULO MODIFICAMOS LA CANTIDAD EN UNO*/
+                    /*CON LA SELECT TENGO QUE OBTENER EL VALOR DE LA CELDA PARA CREAR UN METODO ELIMINAR QUE SEA . REMOVE() Y POR PARAMETRO LE PASO LA CELDA 
+                    QUE HEMOS OBTENIDO CON EL SELECT*/
+                    
+                    
+                } else
+                {
+                    out.print("No hay productos");
                 }
+                
+                
             }
-
+            
             out.print(botonSeleccionado);
         %>
 
