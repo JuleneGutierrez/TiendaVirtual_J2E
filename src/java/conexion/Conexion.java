@@ -13,11 +13,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import modelo.Producto;
 
 /**
  * No me mueras plisss
@@ -105,6 +107,7 @@ public class Conexion extends HttpServlet
 
         /*Creamos un objeto statement*/
         Statement stmt;
+        
         try
         {
             /*Llamamos al metodo del objeto Connection createStatement*/
@@ -112,10 +115,13 @@ public class Conexion extends HttpServlet
             stmt = conexion.createStatement();
 
             // Paso 4: Ejecutar las sentencias SQL a traves de los objetos Statement
-            String sqlStr = "select * from usuario;";
+            String sqlStr = "select * from libro;";
 
             /*Se almacenan los datos en el objeto ResultSet*/
             ResultSet rset = stmt.executeQuery(sqlStr);
+            
+            
+            
 
             /*Se retornan los datos de la sentencia SQL*/
             return rset;
@@ -181,7 +187,7 @@ public class Conexion extends HttpServlet
             //Ejecutamos la consulta
             preparedStatement.executeUpdate();
 
-            System.out.println(preparedStatement.executeUpdate());
+           // System.out.println(preparedStatement.executeUpdate());
             //Cerramos los recursos
             preparedStatement.close();
             

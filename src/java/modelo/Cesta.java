@@ -6,125 +6,99 @@
 package modelo;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+
 
 /**
  *
  * @author Julencia
  */
-@WebServlet(name = "Cesta", urlPatterns = {"/Cesta"})
-public class Cesta extends HttpServlet {
+public class Cesta implements Serializable
+{
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        
     
+    /*Atributo de la clase cesta, ArrayList*/
+    
+    private ArrayList<Producto> arrayProductos;
+
+    /*Constructor vacio*/
+    public Cesta()
+    {
+        this.arrayProductos = new ArrayList<Producto>();
     }
-    private Producto[] productos;
 
-        // Constructores
-        public Cesta(Producto[] productos) {
-            this.productos = productos;
-        }
-        public Cesta( ) {
-            this.productos = new Producto[0];
-        }
+    /*Constructor completo*/
+    public Cesta(ArrayList<Producto> productos)
+    {
+        this.arrayProductos = productos;
+    }
 
-        // Método getter para acceder al array
-        public Producto[] getProductos() {
-            return productos;
-        }
-        // Método setter para modificar el array
-        public void setProductos(Producto[] productos) {
-            this.productos = productos;
-        }
-        /* Creamos un metodo en la clase cesta para agregar nuevos libros */
-        public void agregarProducto(Producto pProducto){
-            this.productos[this.productos.length] = pProducto;
-        }
-        // Implementación del método serialize
-        public Producto[] serialize(){
-            return productos;
-        }
-        // Implementación del método unserialize
-        public void deserializar(byte[] datos) {
-            try {
-                ByteArrayInputStream entradaBytes = new ByteArrayInputStream(datos);
-                ObjectInputStream entradaObjetos = new ObjectInputStream(entradaBytes);
-                this.productos = (Producto[]) entradaObjetos.readObject();
-                entradaObjetos.close();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+    
+    /*GETTER Y SETTERS*/
+    public ArrayList<Producto> getArrayProductos()
+    {
+        return arrayProductos;
+    }
+
+    public void setArrayProductos(ArrayList<Producto> arrayProductos)
+    {
+        this.arrayProductos = arrayProductos;
+    }
+    
+    
+    /*Metodos*/
+    
+    public void agregarProducto(Producto producto)
+    {
+        /*Usamos el metodo add de arrayList y le pasamos el producto*/
+        this.arrayProductos.add(producto);
+        
+    }
+   
+    
+      // Implementación del método serialize
+    public byte[] serialize() throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(this);
+        objectOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    // Implementación del método unserialize
+    public static Producto unserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+        Producto productos = (Producto) objectInputStream.readObject();
+        objectInputStream.close();
+        return productos;
+    }
+    
+    /*Metodo para buscar El producto y despues modificar la cantidad del mismo que se quiere comprar*/
+    
+    public Producto buscarProducto(String tituloLibro)
+    {
+        /*Recorre el arraylist que contiene los arrayProductos*/
+        for (int i = 0; i < this.arrayProductos.size(); i++)
+        {
+            /*Con este if comparamos el titulo que obtenemos al recorrer ese arraylist con el proporcionado*/
+            if (this.arrayProductos.get(i).getTitulo().equals(tituloLibro))
+            {
+                /*Si encontramos coincidencia devolvemos el objeto producto*/
+                return arrayProductos.get(i);
             }
         }
-        // Método para buscar un producto determinado por título
-        // Si encuentra coincidencias dentro del array, retorna el producto
-        // Si no encuentra ninguna coincidencia, retorna null 
-        public Producto buscarProductoPorTitulo(String tituloDelProducto) {
-            for (Producto producto : this.productos) {
-                if (producto.obtenerTitulo().equals(tituloDelProducto)) {
-                    return producto;
-                }
-            }
-            return null;
-        }
-    
-
         
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+        return null;
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+    
+    /*CREAR EL METODO DE ELIMINAR*/
+  
+   
 }

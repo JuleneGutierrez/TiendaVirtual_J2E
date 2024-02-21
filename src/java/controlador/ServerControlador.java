@@ -11,13 +11,18 @@ import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import modelo.Producto;
 
+/*Importamos la clase producto para poder hacer uso de ello*/
 /**
  *
  * @author Julencia
@@ -35,7 +40,7 @@ public class ServerControlador extends HttpServlet
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
+            throws ServletException, IOException, SQLException
     {
         response.setContentType("text/html;charset=UTF-8");
 
@@ -83,29 +88,29 @@ public class ServerControlador extends HttpServlet
                         String nombrePers = resultSet.getString("nombre");
                         String idUsuario = resultSet.getString("id_usuario");
                         String usuariolog = resultSet.getString("usuario");
-                        
+
                         /*Guardo en una variable de sesion el rol del usuario y su nombre*/
                         session.setAttribute("rol", rol);
                         session.setAttribute("nombre", nombrePers);
                         session.setAttribute("usuario", usuariolog);
-                        
+
                         /*COMPROBACIONES DE FUNCIONAMIENTO*/
                         System.out.println("¡Credenciales válidas!");
                         System.out.println(rol);
                         System.out.println(nombrePers);
                         System.out.println(idUsuario);
-                        
+
+                        /*CONDICIONAR ROLES PARA ACCESO SIN LOGEO Y CON LOGEO ----------- USAR ELSE IF ANALIZANDO COMPRADOR Y VENDEDOR  REDIRECCION
+                        A MENU Y SI NO ES NINGUNO (ELSE) REDIRECCION A LOGIN Y DESTRUCCION DE SESIONS*/
                         /*Al igual que en php desde aqui ya redirigimos al usuario en caso de ser rol invitado*/
-                        if("invitado".equals(rol))
+                        if ("invitado".equals(rol))
                         {
-                             ruta = "/previsualizacion.jsp";
-                        }else
+                            ruta = "/previsualizacion.jsp";
+                        } else
                         {
                             /*En caso de que sea cualquier otro rol se ira al menu*/
                             ruta = "/menu.jsp";
                         }
-
-                        
 
                     } else
                     {
@@ -148,10 +153,43 @@ public class ServerControlador extends HttpServlet
 
                 ruta = "/menu.jsp";
 
-            }else if("Comprar".equals(botonSeleccionado))
+            } else if ("Comprar".equals(botonSeleccionado))
             {
                 ruta = "/catalogo.jsp";
+
+                /*Para enviar el array de libros a traves de la session necesito extraer los registros reogidos por resulset y meterlos en el aaray
+                list de productos*/
+                ResultSet recogerLibros = conexion.obtenerLibros();
+
+                /*Creo el arrayList de productos llamado todosLibros*/
+                ArrayList<Producto> todosLibros = new ArrayList();
+
+                try
+                {
+                    /*Uso el metodo .next() para recoger los registros extraidos por resulset */
+                    while (recogerLibros.next())
+                    {
+                        String ptitulo = recogerLibros.getString("titulo");
+                        String pautor = recogerLibros.getString("autor");
+                        String peditorial= recogerLibros.getString("editorial");
+                        double pPrecio = recogerLibros.getDouble("precio");
+                        
+                        /*Creo un nuevo Objeto producto con los datos correspondientes a cada libro de la BD */
+                        Producto datosLibro = new Producto(ptitulo, pPrecio, pautor, peditorial);
+                        
+                        /*Añado al arrayList creado el producto creado con la informacion de los libros extraidos de la Bd*/
+                        todosLibros.add(datosLibro);
+                        
+                    }
+                } catch (SQLException e)
+                {
+                    System.out.println(e.getMessage());
+                }
+
+                session.setAttribute("libros", todosLibros);
+                //session.setAttribute("Libros",conexion.obtenerLibros());
             }
+          
 
 
             /*Redirigo la peticion */
@@ -177,7 +215,13 @@ public class ServerControlador extends HttpServlet
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        processRequest(request, response);
+        try
+        {
+            processRequest(request, response);
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(ServerControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -192,7 +236,13 @@ public class ServerControlador extends HttpServlet
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        processRequest(request, response);
+        try
+        {
+            processRequest(request, response);
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(ServerControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
