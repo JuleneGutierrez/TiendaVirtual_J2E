@@ -13,8 +13,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
-
 /**
  *
  * @author Julencia
@@ -22,15 +20,12 @@ import java.util.ArrayList;
 public class Cesta implements Serializable
 {
 
-    
     /*Atributo de la clase cesta, ArrayList*/
-    
     private ArrayList<Producto> arrayProductos;
 
-    /*Constructor vacio*/
     public Cesta()
     {
-        this.arrayProductos = new ArrayList<Producto>();
+        this.arrayProductos = new ArrayList<>();
     }
 
     /*Constructor completo*/
@@ -39,7 +34,6 @@ public class Cesta implements Serializable
         this.arrayProductos = productos;
     }
 
-    
     /*GETTER Y SETTERS*/
     public ArrayList<Producto> getArrayProductos()
     {
@@ -50,20 +44,10 @@ public class Cesta implements Serializable
     {
         this.arrayProductos = arrayProductos;
     }
-    
-    
-    /*Metodos*/
-    
-    public void agregarProducto(Producto producto)
+
+    // Implementación del método serialize
+    public byte[] serialize() throws IOException
     {
-        /*Usamos el metodo add de arrayList y le pasamos el producto*/
-        this.arrayProductos.add(producto);
-        
-    }
-   
-    
-      // Implementación del método serialize
-    public byte[] serialize() throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
         objectOutputStream.writeObject(this);
@@ -72,16 +56,16 @@ public class Cesta implements Serializable
     }
 
     // Implementación del método unserialize
-    public static Producto unserialize(byte[] data) throws IOException, ClassNotFoundException {
+    public static Producto unserialize(byte[] data) throws IOException, ClassNotFoundException
+    {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
         Producto productos = (Producto) objectInputStream.readObject();
         objectInputStream.close();
         return productos;
     }
-    
-    /*Metodo para buscar El producto y despues modificar la cantidad del mismo que se quiere comprar*/
-    
+
+    /*Metodo para buscar el producto dentro del arrayProductos, si lo encuentra devuelve el producto, sino devuelve un null*/
     public Producto buscarProducto(String tituloLibro)
     {
         /*Recorre el arraylist que contiene los arrayProductos*/
@@ -94,11 +78,42 @@ public class Cesta implements Serializable
                 return arrayProductos.get(i);
             }
         }
-        
+
         return null;
     }
-    
-    /*CREAR EL METODO DE ELIMINAR*/
-  
-   
+
+    /* Metodo usado para agregar nuevos productos a la cesta. Si ya existe el producto en la cesta, sumara las cantidades */
+    public void agregarProductos(ArrayList<Producto> arrayNuevosProd)
+    {
+        /* Recorro el array con el bucle for */
+        for (int i = 0; i < arrayNuevosProd.size(); i++)
+        {
+            /* Guardo en la variable producto lo que nos devuelve el metodo buscarProducto. 
+                Al metodo le pasamos como parametro el titulo del producto que estamos mirando en el array. */
+            
+            /*Aqui metemos el libro encontrado por el metodo buscarProducto*/
+            Producto productoCesta = buscarProducto(arrayNuevosProd.get(i).getTitulo());
+
+            /* Si el metodo buscarProducto ha encontrado ese producto en la cesta, procedemos a sumar las cantidades */
+            if (productoCesta != null)
+            {
+                /* Sumo la cantidad del producto que hemos recibido como parametro con la cantidad del producto de la cesta */
+                int sumaCantidades = productoCesta.getCantidad() + arrayNuevosProd.get(i).getCantidad();
+
+                /* Modificamos la cantidad del producto con la suma resultante */
+                productoCesta.setCantidad(sumaCantidades);
+            } else
+            {
+                /* Si no existe el producto en la cesta, usamos el metodo add del arrat para que se agrega a ella */
+                this.arrayProductos.add(arrayNuevosProd.get(i));
+            }
+        }
+    }
+
+    /* Metodo usado para elminar un producto por su posicion en el array, el parametre es la posicion de la celda que vamos a borrar */
+    public void borrarProducto(String celdaBorrar)
+    {
+        /* Borramos la celda con el metodo remove de la clase ArrayList, como parametro le enviamos la posicion de la celda */
+        this.arrayProductos.remove(Integer.parseInt(celdaBorrar));
+    }
 }

@@ -64,6 +64,15 @@
                 </tr>
 
                 <%
+                    /*Creamos una nueva cesta con los datos de la sesion cesta */
+                    Cesta nuevaCesta = (Cesta) session.getAttribute("cesta");
+
+                    /* Si la sesion no tiene cesta, creo una nueva cesta para guardar los productos */
+                    if (nuevaCesta == null)
+                    {
+                        nuevaCesta = new Cesta();
+                    }
+
                     /*Creamos un arraylist donde descargo el arrayLista pasado por variable de sesion desde el controlador con los libros de la BD*/
                     ArrayList<Producto> libros = (ArrayList<Producto>) session.getAttribute("libros");
 
@@ -95,47 +104,80 @@
 
 
         <%
-            
+            /* Se recoge el contenido del boton del primer formulario agregar */
             String botonSeleccionado = request.getParameter("enviar");
-            if ("agregar".equals(botonSeleccionado))
+
+            /* Se obtiene el contenido del boton de eliminar registro de la cesta, este contenido tiene el numero de la celda del producto a eliminar */
+            String botonBorrar = request.getParameter("borrar");
+
+            /* Si se ha pulsado uno de los botones de eliminar, entra en el if */
+            if (botonBorrar != null)
+            {
+                /* Llamamos al metodo de la cesta encargado de eliminar un producto cuya celda se envie por parametro */
+                nuevaCesta.borrarProducto(botonBorrar);
+            }
+
+            /* Si se ha pulsado el boton de agregar o el boton de eliminar, entra en el if  para que se actualice la tabla cuando se modifica*/
+            if ("agregar".equals(botonSeleccionado) || botonBorrar != null)
             {
                 System.out.println("El botón 'Añadir a la cesta' ha sido seleccionado.");
-                // Aquí puedes agregar la lógica para procesar los productos agregados a la cesta
 
-                /*Creamos una nueva cesta */
-                Cesta nuevaCesta = new Cesta();
-
-                /*Creamos un objetos gestioCesta que */
+                /*Creamos un objetos gestioCesta que gestionara la obtencion de todas las claves valor del formulario, 
+                    para solo coger las cantidades de los productos seleccionados */
                 GestionCesta gestionCesta = new GestionCesta();
 
                 /* Llamo a la funcion catalogoProducto y le paso como parametro las claves valor de todo el formulario, esta funcion me devuelve un ArrayList con los productos */
                 ArrayList<Producto> arrayProductos = gestionCesta.catalogoProducto(request.getParameterMap());
 
+                /* Se agregan los productos obtenidos del formulario, se usa la funcion agregarProductos de la clase Cesta para agregarlos */
+                nuevaCesta.agregarProductos(arrayProductos);
+
+                /* Guardamos la cesta modificada en la sesion */
+                session.setAttribute("cesta", nuevaCesta);
+
                 /* Imprimo los productos para comprobar que funciona */
-                if (arrayProductos.size()>0)
+                if (nuevaCesta.getArrayProductos().size() > 0)
                 {
-                    out.print(arrayProductos);
-                    
-                    //nuevaCesta.agregarProducto(producto);
-                    
-                    /*Agregar los productos a la cesta, con un for que recorra el arrayProductos y que meta en la cesta nuevaCesta esos productos
-                    Despues de esto generar la tabla , cargando la nuevaCesta en las columnas,  y en esta tabla añadir una nueva columna con un select para eliminar,
-                    despues, en la clase GestionCesta*/
-                    
-                    /*EN EL METODO DE AGREGAR INTRODUCTO EL METODO BUSCAR Y SI EXISTE EL OBJETO PRODUCTO POR TITULO MODIFICAMOS LA CANTIDAD EN UNO*/
-                    /*CON LA SELECT TENGO QUE OBTENER EL VALOR DE LA CELDA PARA CREAR UN METODO ELIMINAR QUE SEA . REMOVE() Y POR PARAMETRO LE PASO LA CELDA 
-                    QUE HEMOS OBTENIDO CON EL SELECT*/
-                    
-                    
+
+                    /* Se crea el formulario que mostrar los productos agregados en la cesta */
+        %>
+        <form name="enviar" action="catalogo.jsp" method="POST">
+            <table>
+                <tr>
+                    <th>Titulo</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Eliminar</th>
+                </tr>
+
+                <% /*Recorremos el tamaño de la cesta que contiene todos los productos guardados en ella*/
+                    for (int i = 0; i < nuevaCesta.getArrayProductos().size(); i++)
+                    {
+                %>
+
+                <tr>
+                    <td><%=nuevaCesta.getArrayProductos().get(i).getTitulo()%></td>
+                    <td><%=nuevaCesta.getArrayProductos().get(i).getPrecio()%></td>
+                    <td><%=nuevaCesta.getArrayProductos().get(i).getCantidad()%></td>
+                    <td><button type="submit" value="<%=i%>" name="borrar">Eliminar</button></td> <!-- Se guarda el valor de la posicion en el array dentro de cesta -->
+                </tr>
+
+
+                <% }%>
+
+            </table>
+        </form>
+        <br>
+        <form name="enviar" action="ServerControlador" method="POST">
+            <input type="submit" value="comprar" name="comprar" />
+        </form>
+        <%
                 } else
                 {
-                    out.print("No hay productos");
+                    out.print("No hay productos en la cesta");
                 }
-                
-                
+
             }
-            
-            out.print(botonSeleccionado);
         %>
 
     </body>
