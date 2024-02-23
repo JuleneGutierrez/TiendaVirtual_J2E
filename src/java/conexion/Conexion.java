@@ -201,7 +201,6 @@ public class Conexion extends HttpServlet
     }
 
     /*METODO PARA REALIZAR UN INSERT EN LA TABLA PEDIDOS, Y DETALLE PEDIDOSS EN LA  BD*/
-    
     public void insertarPedido(int idUsuario, double sumatorio, Cesta cesta)
     {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
@@ -210,10 +209,8 @@ public class Conexion extends HttpServlet
         //PreparedStatement preparedStatement = null;
         try
         {
-            
-        // INSERCION EN LA TABLA PEDIDOS EL ID DE USUARIO Y EL FACTURADO, YA QUE EL ESTADO ES POR DEFECTO
-            
-         
+
+            // INSERCION EN LA TABLA PEDIDOS EL ID DE USUARIO Y EL FACTURADO, YA QUE EL ESTADO ES POR DEFECTO
             /*Guardamos en sqlStr la consulta de insert de las columnas de id_usuario y facturado de la tabla pedido*/
             String sqlStr = "INSERT INTO pedido (id_usuario,facturado) VALUES (?,?)";
 
@@ -227,8 +224,7 @@ public class Conexion extends HttpServlet
             /*Usamos el metodo executeUpdate del objeto preparedStatement para realizar la sentencia insert*/
             preparedStatement.executeUpdate();
 
-        // UNA VEZ REGISTRADO EL PEDIDO EN LA TABLA PEDIDOS, ES NECESARIO TAMBIEN INSERTAR LO REFERENTE DE ESTE PEDIDO EN DETALLES PEDIDO
-           
+            // UNA VEZ REGISTRADO EL PEDIDO EN LA TABLA PEDIDOS, ES NECESARIO TAMBIEN INSERTAR LO REFERENTE DE ESTE PEDIDO EN DETALLES PEDIDO
             /*Con esta consulta buscamos el pedido con el id de pedido maximo (que seria el que acabamos de registrar) correspondiente al id 
             del usuario que lo ha realizado*/
             sqlStr = "SELECT MAX(id_pedido) as pedidoMaximo FROM pedido WHERE id_usuario=?";
@@ -244,9 +240,8 @@ public class Conexion extends HttpServlet
 
             /*Guardadmos ahora en la variable idPedidoMax el pedido correspondiente*/
             int idPedidoMax = rset.getInt("pedidoMaximo");
-            
-        //INSERCION DE LOS DETALLES PEDIDO, PARA ELLO HEMOS NECESITADO OBTENER EL ULTIMO PEDIDO (SELECT ANTERIOR)
-            
+
+            //INSERCION DE LOS DETALLES PEDIDO, PARA ELLO HEMOS NECESITADO OBTENER EL ULTIMO PEDIDO (SELECT ANTERIOR)
             /*Recorremos el array de productos de la cesta del usuario*/
             for (int i = 0; i < cesta.getArrayProductos().size(); i++)
             {
@@ -274,6 +269,58 @@ public class Conexion extends HttpServlet
             //Manejamos la excepción imprimiendo el mensaje de error
             ex.printStackTrace();
 
+        }
+    }
+
+    /*Metodo usado HACER CONSULTA
+    COMENTARIO DE PRUEBA*/
+    public ResultSet verPedidoC(int idUsuario, String opcionSelect)
+    {
+        /*Usamos el metodo encargado de iniciar la conexion con la BD*/
+        conectarBD();
+
+        /*Creamos un objeto statement*/
+        Statement stmt;
+        try
+        {
+            /* Creo la variable donde guardar la consulta*/
+            String sqlStr;
+            
+            /*Si el usuario seleciona la opcion de todos enrta en el if y vera todos los pedidos que tenga mostrados en una tabla en 
+            la cual tambien hemos extraido otros detalles realtivos al pedido por ello usamos el INNER JOIN, Hacemos el sumatorio del total de productos
+            comprados con SUM y agrupamos por el id del pedido para que sea mas sencilla y logica la visualizacion */
+            if ("todos".equals(opcionSelect))
+            {
+                sqlStr = "SELECT pedido.id_pedido, pedido.estadoPedido AS Estado, pedido.facturado AS TOTAL, "
+                        + "SUM(detallePedido.cantidad) AS Articulos "
+                        + "FROM pedido INNER JOIN detallePedido ON pedido.id_pedido = detallePedido.id_pedido "
+                        + "WHERE pedido.id_usuario =" + idUsuario + " "
+                        + "GROUP BY pedido.id_pedido, pedido.estadoPedido, pedido.facturado";
+
+            } else
+            {
+                /*Realizamos la consulta conforme al estado selecionado para que nos devuelva id de pedido, el estado del mismo, asi como el total del precio y la cantidad
+                de articulos totales que contiene el pedido*/
+                sqlStr = "SELECT pedido.id_pedido, pedido.estadoPedido AS Estado, pedido.facturado AS TOTAL, "
+                        + "SUM(detallePedido.cantidad) AS Articulos "
+                        + "FROM pedido INNER JOIN detallePedido ON pedido.id_pedido = detallePedido.id_pedido "
+                        + "WHERE pedido.id_usuario = " + idUsuario + " AND pedido.estadoPedido = '" + opcionSelect + "' "
+                        + "GROUP BY pedido.id_pedido, pedido.estadoPedido, pedido.facturado";
+
+            }
+            /*Llamamos al metodo del objeto Connection createStatement*/
+            /*Crear sentencias SQL, utilizando objetos de tipo Statement*/
+            stmt = conexion.createStatement();
+
+            /*Se almacenan los datos de la consulta en el objeto ResultSet*/
+            ResultSet rset = stmt.executeQuery(sqlStr);
+
+            /*Se retornan los datos de la sentencia SQL al controlador para gestionarlos como sea necesario*/
+            return rset;
+
+        } catch (SQLException ex)
+        {
+            return null;
         }
     }
 

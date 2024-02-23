@@ -18,15 +18,37 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <style>
+ * {
+                font-family: Helvetica, Verdana, sans-serif;
+                text-align: center;
+            }
+            
+            input {
+                border-radius: 4px;
+            }
+            
+            input:hover {
+                background-color: lightskyblue;
+            }
 
             table{
-
+                margin-left: auto;
+                margin-right: auto;
                 width: 80%;
 
             }
             tr
             {
                 height: 40px
+            }
+
+            th {
+                background-color: lightskyblue;
+            }
+
+            td {
+                padding-left: 20px;
+                text-align: left;
             }
             table, tr, td,th
             {

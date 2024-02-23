@@ -125,10 +125,13 @@ public class ServerControlador extends HttpServlet
                     // Manejar la excepción aquí
                     ex.printStackTrace(); // Imprimir la traza de la excepción (solo para propósitos de depuración)
                 }
+                
+                /*GESTION BOTON REGISTRARSE (DE LOGIN.JSP)  */
             } else if ("Registrarse".equals(botonSeleccionado))
             {
                 ruta = "/registro.jsp";
 
+                /*GESTION BOTON CONFIRMAR (DE REGISTRO.JSP)COMPRADOR */
             } else if ("Confirmar".equals(botonSeleccionado))
             {
 
@@ -155,12 +158,13 @@ public class ServerControlador extends HttpServlet
 
                 ruta = "/menu.jsp";
 
+                /*GESTION BOTON COMPRAR (DEL MENU.JSP)COMPRADOR */ 
             } else if ("Comprar".equals(botonSeleccionado))
             {
                 ruta = "/catalogo.jsp";
 
                 /*Para enviar el array de libros a traves de la session necesito extraer los registros reogidos por resulset y meterlos en el aaray
-                list de productos*/
+                list de productos,para ello uso el metodo creado  de obtener libros*/
                 ResultSet recogerLibros = conexion.obtenerLibros();
 
                 /*Creo el arrayList de productos llamado todosLibros*/
@@ -190,9 +194,13 @@ public class ServerControlador extends HttpServlet
 
                 session.setAttribute("libros", todosLibros);
                 //session.setAttribute("Libros",conexion.obtenerLibros());
+                
+              /*GESTION BOTON CHECKOUT DE LA CESTA (CATALOGO.JSP) COMPRADOR*/ 
             } else if("Checkout".equals(botonSeleccionado))
             {
                 ruta = "/pagar.jsp";
+                
+              /*GESTION BOTON PAGAR CESTA (PAGAR.JSP)COMPRADOR*/ 
             } else if("Pagar".equals(botonSeleccionado))
             {
                 /*Obtenemos  de las variables de sesion el id del usuario, el total pagado, y su cesta para poder recogerlo en metodo
@@ -207,6 +215,29 @@ public class ServerControlador extends HttpServlet
                 
                 /*Una vez que ha pulsado pagar en pago le lleva al menu */
                 ruta = "/menu.jsp";
+                
+              /*GESTION BOTON ESTADO PEDIDO (MENU.JSP) COMPRADOR*/  
+            } else if("EstadoPedido".equals(botonSeleccionado))
+            {
+                
+                ruta = "/verPedidosC.jsp";
+              
+              /*GESTION BOTON DE FILTRAR PEDIDOS (VERPEDIDOS.JSP) COMPRADOR*/ 
+            } else if ("Filtrar Pedido".equals(botonSeleccionado))
+            {
+                /*Recojemos el id del usuario para pasarlo por parametro al metodo de buscar pedidos, para que solo nos muestre los pedidos
+                de dicho usuario*/
+                
+                int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
+            
+                /*Recojemos la opcion selecionada en el select, donde el usuario puede ver sus pedidos usando un filtro en cuanto al estado*/
+                String opcionSelect = request.getParameter("opcion");
+                
+                ResultSet pedidos = conexion.verPedidoC(idUsuario, opcionSelect);
+                
+                request.setAttribute("pedidos", pedidos);
+                
+                ruta = "/verPedidosC.jsp";
             }
           
 
