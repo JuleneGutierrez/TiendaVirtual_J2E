@@ -169,7 +169,7 @@
         </form>
         <br>
         <form name="enviar" action="ServerControlador" method="POST">
-            <input type="submit" value="comprar" name="comprar" />
+            <input type="submit" value="Checkout" name="enviar" />
         </form>
         <%
                 } else

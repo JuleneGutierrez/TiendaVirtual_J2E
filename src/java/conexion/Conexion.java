@@ -19,7 +19,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import modelo.Cesta;
 import modelo.Producto;
+import org.jboss.weld.servlet.SessionHolder;
 
 /**
  * No me mueras plisss
@@ -107,7 +109,7 @@ public class Conexion extends HttpServlet
 
         /*Creamos un objeto statement*/
         Statement stmt;
-        
+
         try
         {
             /*Llamamos al metodo del objeto Connection createStatement*/
@@ -119,9 +121,6 @@ public class Conexion extends HttpServlet
 
             /*Se almacenan los datos en el objeto ResultSet*/
             ResultSet rset = stmt.executeQuery(sqlStr);
-            
-            
-            
 
             /*Se retornan los datos de la sentencia SQL*/
             return rset;
@@ -187,11 +186,87 @@ public class Conexion extends HttpServlet
             //Ejecutamos la consulta
             preparedStatement.executeUpdate();
 
-           // System.out.println(preparedStatement.executeUpdate());
+            // System.out.println(preparedStatement.executeUpdate());
             //Cerramos los recursos
             preparedStatement.close();
-            
+
             /*GESTIONAR CON UN IF SI PREPAREDSTATEMENT DEVUELVE FALSE QUE RETORNE UN MENSAJE, PARA ESO CAMBIAR EL METO DE VOID A STRING O ALGO*/
+        } catch (SQLException ex)
+        {
+
+            //Manejamos la excepción imprimiendo el mensaje de error
+            ex.printStackTrace();
+
+        }
+    }
+
+    /*METODO PARA REALIZAR UN INSERT EN LA TABLA PEDIDOS, Y DETALLE PEDIDOSS EN LA  BD*/
+    
+    public void insertarPedido(int idUsuario, double sumatorio, Cesta cesta)
+    {
+        /*Usamos el metodo encargado de iniciar la conexion con la BD*/
+        conectarBD();
+
+        //PreparedStatement preparedStatement = null;
+        try
+        {
+            
+        // INSERCION EN LA TABLA PEDIDOS EL ID DE USUARIO Y EL FACTURADO, YA QUE EL ESTADO ES POR DEFECTO
+            
+         
+            /*Guardamos en sqlStr la consulta de insert de las columnas de id_usuario y facturado de la tabla pedido*/
+            String sqlStr = "INSERT INTO pedido (id_usuario,facturado) VALUES (?,?)";
+
+            /*Usamos una consulta preparada utilizando el objeto PreparedStatement evitando asi la inyeccion de codigo SQL*/
+            PreparedStatement preparedStatement = conexion.prepareStatement(sqlStr);
+
+            /* Ahora si damos los prametros del insert*/
+            preparedStatement.setInt(1, idUsuario);
+            preparedStatement.setDouble(2, sumatorio);
+
+            /*Usamos el metodo executeUpdate del objeto preparedStatement para realizar la sentencia insert*/
+            preparedStatement.executeUpdate();
+
+        // UNA VEZ REGISTRADO EL PEDIDO EN LA TABLA PEDIDOS, ES NECESARIO TAMBIEN INSERTAR LO REFERENTE DE ESTE PEDIDO EN DETALLES PEDIDO
+           
+            /*Con esta consulta buscamos el pedido con el id de pedido maximo (que seria el que acabamos de registrar) correspondiente al id 
+            del usuario que lo ha realizado*/
+            sqlStr = "SELECT MAX(id_pedido) as pedidoMaximo FROM pedido WHERE id_usuario=?";
+
+            preparedStatement = conexion.prepareStatement(sqlStr);
+
+            /*Pasamos los parametros de la sentencia*/
+            preparedStatement.setInt(1, idUsuario);
+
+            /*Obtener los registros coincidentes con la select, en este caso solo sera uno*/
+            ResultSet rset = preparedStatement.executeQuery();
+            rset.next();
+
+            /*Guardadmos ahora en la variable idPedidoMax el pedido correspondiente*/
+            int idPedidoMax = rset.getInt("pedidoMaximo");
+            
+        //INSERCION DE LOS DETALLES PEDIDO, PARA ELLO HEMOS NECESITADO OBTENER EL ULTIMO PEDIDO (SELECT ANTERIOR)
+            
+            /*Recorremos el array de productos de la cesta del usuario*/
+            for (int i = 0; i < cesta.getArrayProductos().size(); i++)
+            {
+                /*Inser en detalle pedido, la columa del titulo del libro, el id  y su cantidad, ya que se mostrara desglosado en la BBDD */
+                sqlStr = "INSERT INTO detallepedido (tituloLibro,id_pedido,cantidad) VALUES (?,?,?)";
+
+                /*Usamos una consulta preparada utilizando el objeto PreparedStatement evitando asi la inyeccion de codigo SQL*/
+                preparedStatement = conexion.prepareStatement(sqlStr);
+
+                /* Ahora si damos los prametros del insert*/
+                preparedStatement.setString(1, cesta.getArrayProductos().get(i).getTitulo());
+                preparedStatement.setInt(2, idPedidoMax);
+                preparedStatement.setInt(3, cesta.getArrayProductos().get(i).getCantidad());
+
+                /*Usamos el metodo executeUpdate del objeto preparedStatement para realizar la sentencia insert*/
+                preparedStatement.executeUpdate();
+            }
+
+            //Cerramos los recursos
+            preparedStatement.close();
 
         } catch (SQLException ex)
         {

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import modelo.Cesta;
 import modelo.Producto;
 
 /*Importamos la clase producto para poder hacer uso de ello*/
@@ -92,6 +93,7 @@ public class ServerControlador extends HttpServlet
                         /*Guardo en una variable de sesion el rol del usuario y su nombre*/
                         session.setAttribute("rol", rol);
                         session.setAttribute("nombre", nombrePers);
+                        session.setAttribute("id_usuario", idUsuario);
                         session.setAttribute("usuario", usuariolog);
 
                         /*COMPROBACIONES DE FUNCIONAMIENTO*/
@@ -188,6 +190,23 @@ public class ServerControlador extends HttpServlet
 
                 session.setAttribute("libros", todosLibros);
                 //session.setAttribute("Libros",conexion.obtenerLibros());
+            } else if("Checkout".equals(botonSeleccionado))
+            {
+                ruta = "/pagar.jsp";
+            } else if("Pagar".equals(botonSeleccionado))
+            {
+                /*Obtenemos  de las variables de sesion el id del usuario, el total pagado, y su cesta para poder recogerlo en metodo
+                al que llamamos mas abajo*/
+                
+                int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
+                double sumatorio = (double) session.getAttribute("sumatorio");
+                Cesta cesta = (Cesta) session.getAttribute("cesta");
+                
+                /*Llamamos al metodo para insertar el pedido pagado del usuario */
+                conexion.insertarPedido(idUsuario, sumatorio, cesta);
+                
+                /*Una vez que ha pulsado pagar en pago le lleva al menu */
+                ruta = "/menu.jsp";
             }
           
 
