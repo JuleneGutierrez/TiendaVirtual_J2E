@@ -28,8 +28,7 @@ import modelo.Producto;
  *
  * @author Julencia
  */
-public class ServerControlador extends HttpServlet
-{
+public class ServerControlador extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,8 +40,7 @@ public class ServerControlador extends HttpServlet
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException
-    {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
 
         PrintWriter out = response.getWriter();
@@ -57,8 +55,7 @@ public class ServerControlador extends HttpServlet
         /*Usamos la interfaz RequestDispatcher  para reenviar la solicitud al resto de servlet o jsp */
         RequestDispatcher rd = null;
 
-        try
-        {
+        try {
 
             /*Creamos una variable para guardar la ruta hacia donde se redirigira al usuario*/
             String ruta = "";
@@ -66,8 +63,7 @@ public class ServerControlador extends HttpServlet
             /*Recojo el value de los botones de login y registro y en funcion de cual*/
             String botonSeleccionado = request.getParameter("enviar");
 
-            if ("Entrar".equals(botonSeleccionado))
-            {
+            if ("Entrar".equals(botonSeleccionado)) {
                 // Obtener los parámetros del formulario JSP
                 String usuario = request.getParameter("usuario");
                 String contrasena = request.getParameter("contrasena");
@@ -79,11 +75,9 @@ public class ServerControlador extends HttpServlet
                 la contraseña recogidas del form Y LO RECOJE EL OBJETO RESULTSET*/
                 ResultSet resultSet = conexion.verCredencial(usuario, contrasena);
 
-                try
-                {
+                try {
                     /*Si al menos hay un registro coincidente entra en el if, es decir recorremos el registro devuelto*/
-                    if (resultSet.next())
-                    {
+                    if (resultSet.next()) {
                         /*En caso de que sea asi obtenemos el rol de ese usuario y el nombre*/
                         String rol = resultSet.getString("rol");
                         String nombrePers = resultSet.getString("nombre");
@@ -104,36 +98,30 @@ public class ServerControlador extends HttpServlet
 
                         /*CONDICIONAR ROLES PARA ACCESO SIN LOGEO Y CON LOGEO ----------- USAR ELSE IF ANALIZANDO COMPRADOR Y VENDEDOR  REDIRECCION
                         A MENU Y SI NO ES NINGUNO (ELSE) REDIRECCION A LOGIN Y DESTRUCCION DE SESIONS*/
-                        /*Al igual que en php desde aqui ya redirigimos al usuario en caso de ser rol invitado*/
-                        if ("invitado".equals(rol))
-                        {
+ /*Al igual que en php desde aqui ya redirigimos al usuario en caso de ser rol invitado*/
+                        if ("invitado".equals(rol)) {
                             ruta = "/previsualizacion.jsp";
-                        } else
-                        {
+                        } else {
                             /*En caso de que sea cualquier otro rol se ira al menu*/
                             ruta = "/menu.jsp";
                         }
 
-                    } else
-                    {
+                    } else {
                         System.out.println("¡Credenciales INCORRECTAS!");
                         ruta = "/login.jsp";
 
                     }
-                } catch (SQLException ex)
-                {
+                } catch (SQLException ex) {
                     // Manejar la excepción aquí
                     ex.printStackTrace(); // Imprimir la traza de la excepción (solo para propósitos de depuración)
                 }
-                
+
                 /*GESTION BOTON REGISTRARSE (DE LOGIN.JSP)  */
-            } else if ("Registrarse".equals(botonSeleccionado))
-            {
+            } else if ("Registrarse".equals(botonSeleccionado)) {
                 ruta = "/registro.jsp";
 
                 /*GESTION BOTON CONFIRMAR (DE REGISTRO.JSP)COMPRADOR */
-            } else if ("Confirmar".equals(botonSeleccionado))
-            {
+            } else if ("Confirmar".equals(botonSeleccionado)) {
 
                 /*Recojo todos los datos del formulario*/
                 String nombre = request.getParameter("nombre");
@@ -158,9 +146,8 @@ public class ServerControlador extends HttpServlet
 
                 ruta = "/menu.jsp";
 
-                /*GESTION BOTON COMPRAR (DEL MENU.JSP)COMPRADOR */ 
-            } else if ("Comprar".equals(botonSeleccionado))
-            {
+                /*GESTION BOTON COMPRAR (DEL MENU.JSP)COMPRADOR */
+            } else if ("Comprar".equals(botonSeleccionado)) {
                 ruta = "/catalogo.jsp";
 
                 /*Para enviar el array de libros a traves de la session necesito extraer los registros reogidos por resulset y meterlos en el aaray
@@ -170,84 +157,89 @@ public class ServerControlador extends HttpServlet
                 /*Creo el arrayList de productos llamado todosLibros*/
                 ArrayList<Producto> todosLibros = new ArrayList();
 
-                try
-                {
+                try {
                     /*Uso el metodo .next() para recoger los registros extraidos por resulset */
-                    while (recogerLibros.next())
-                    {
+                    while (recogerLibros.next()) {
                         String ptitulo = recogerLibros.getString("titulo");
                         String pautor = recogerLibros.getString("autor");
-                        String peditorial= recogerLibros.getString("editorial");
+                        String peditorial = recogerLibros.getString("editorial");
                         double pPrecio = recogerLibros.getDouble("precio");
-                        
+
                         /*Creo un nuevo Objeto producto con los datos correspondientes a cada libro de la BD */
                         Producto datosLibro = new Producto(ptitulo, pPrecio, pautor, peditorial);
-                        
+
                         /*Añado al arrayList creado el producto creado con la informacion de los libros extraidos de la Bd*/
                         todosLibros.add(datosLibro);
-                        
+
                     }
-                } catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }
 
                 session.setAttribute("libros", todosLibros);
                 //session.setAttribute("Libros",conexion.obtenerLibros());
-                
-              /*GESTION BOTON CHECKOUT DE LA CESTA (CATALOGO.JSP) COMPRADOR*/ 
-            } else if("Checkout".equals(botonSeleccionado))
-            {
+
+                /*GESTION BOTON CHECKOUT DE LA CESTA (CATALOGO.JSP) COMPRADOR*/
+            } else if ("Checkout".equals(botonSeleccionado)) {
                 ruta = "/pagar.jsp";
-                
-              /*GESTION BOTON PAGAR CESTA (PAGAR.JSP)COMPRADOR*/ 
-            } else if("Pagar".equals(botonSeleccionado))
-            {
+
+                /*GESTION BOTON PAGAR CESTA (PAGAR.JSP)COMPRADOR*/
+            } else if ("Pagar".equals(botonSeleccionado)) {
                 /*Obtenemos  de las variables de sesion el id del usuario, el total pagado, y su cesta para poder recogerlo en metodo
                 al que llamamos mas abajo*/
-                
+
                 int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
                 double sumatorio = (double) session.getAttribute("sumatorio");
                 Cesta cesta = (Cesta) session.getAttribute("cesta");
-                
+
                 /*Llamamos al metodo para insertar el pedido pagado del usuario */
                 conexion.insertarPedido(idUsuario, sumatorio, cesta);
-                
+
                 /*Una vez que ha pulsado pagar en pago le lleva al menu */
                 ruta = "/menu.jsp";
-                
-              /*GESTION BOTON ESTADO PEDIDO (MENU.JSP) COMPRADOR*/  
-            } else if("EstadoPedido".equals(botonSeleccionado))
-            {
-                
+
+                /*GESTION BOTON ESTADO PEDIDO (MENU.JSP) COMPRADOR*/
+            } else if ("EstadoPedido".equals(botonSeleccionado)) {
+
                 ruta = "/verPedidosC.jsp";
-              
-              /*GESTION BOTON DE FILTRAR PEDIDOS (VERPEDIDOS.JSP) COMPRADOR*/ 
-            } else if ("Filtrar Pedido".equals(botonSeleccionado))
-            {
+
+                /*GESTION BOTON DE FILTRAR PEDIDOS (VERPEDIDOS.JSP) COMPRADOR*/
+            } else if ("Filtrar Pedido".equals(botonSeleccionado)) {
                 /*Recojemos el id del usuario para pasarlo por parametro al metodo de buscar pedidos, para que solo nos muestre los pedidos
                 de dicho usuario*/
-                
+
                 int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
-            
+
                 /*Recojemos la opcion selecionada en el select, donde el usuario puede ver sus pedidos usando un filtro en cuanto al estado*/
                 String opcionSelect = request.getParameter("opcion");
-                
-                ResultSet pedidos = conexion.verPedidoC(idUsuario, opcionSelect);
-                
-                request.setAttribute("pedidos", pedidos);
-                
-                ruta = "/verPedidosC.jsp";
-            }
-          
 
+                ResultSet pedidos = conexion.verPedidoC(idUsuario, opcionSelect);
+
+                request.setAttribute("pedidos", pedidos);
+
+                ruta = "/verPedidosC.jsp";
+            } //PREVISUALIZACIÓN
+            else if ("Salir".equals(botonSeleccionado)) {
+                ruta = "/login.jsp";
+            } else if ("Cambiar Rol".equals(botonSeleccionado)) {
+                int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
+                System.out.println("id_usuario " + idUsuario);
+
+                /*Llamamos al metodo para insertar el pedido pagado del usuario */
+                boolean respuestaInsertarSolicitud = conexion.insertarSolicitud(idUsuario);
+                if (!respuestaInsertarSolicitud) {
+                    response.setContentType("text/html");
+                    response.getWriter().println("<p>Error: La condición es falsa</p>");
+                }
+                ruta = "/previsualizacion.jsp";
+
+            }
 
             /*Redirigo la peticion */
             rd = getServletContext().getRequestDispatcher(ruta);
             rd.forward(request, response);
 
-        } finally
-        {
+        } finally {
             out.close();
         }
     }
@@ -263,13 +255,10 @@ public class ServerControlador extends HttpServlet
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        try
-        {
+            throws ServletException, IOException {
+        try {
             processRequest(request, response);
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             Logger.getLogger(ServerControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -284,13 +273,10 @@ public class ServerControlador extends HttpServlet
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        try
-        {
+            throws ServletException, IOException {
+        try {
             processRequest(request, response);
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             Logger.getLogger(ServerControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -301,8 +287,7 @@ public class ServerControlador extends HttpServlet
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo()
-    {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

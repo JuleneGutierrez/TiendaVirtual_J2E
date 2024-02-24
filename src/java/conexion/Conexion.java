@@ -45,8 +45,8 @@ public class Conexion extends HttpServlet
     {
         /*Asigno a los atributos lo correspondiente que sera por defecto*/
         this.url = "jdbc:mysql://localhost/tienda";
-        this.usuario = "julene";
-        this.contrasena = "julene";
+        this.usuario = "root";
+        this.contrasena = "";
 
         try
         {
@@ -321,6 +321,50 @@ public class Conexion extends HttpServlet
         } catch (SQLException ex)
         {
             return null;
+        }
+    }
+    
+    /*METODO PARA REALIZAR UN INSERT EN LA TABLA SOLICITUDES*/
+    public boolean insertarSolicitud(int idUsuario)
+    {
+        /*Usamos el metodo encargado de iniciar la conexion con la BD*/
+        conectarBD();
+
+        try
+        {
+            String sqlStr = "SELECT id_usuario FROM solicitudes WHERE id_usuario = ?" ;
+
+            PreparedStatement preparedStatement = conexion.prepareStatement(sqlStr);
+
+            preparedStatement.setInt(1, idUsuario);
+            ResultSet rset = preparedStatement.executeQuery();
+            if(rset.next()){
+                return false;
+            }
+            
+            sqlStr = "INSERT INTO solicitudes (id_usuario) VALUES (?)";
+
+            /*Usamos una consulta preparada utilizando el objeto PreparedStatement evitando asi la inyeccion de codigo SQL*/
+            preparedStatement = conexion.prepareStatement(sqlStr);
+
+            /* Ahora si damos los prametros del insert*/
+            preparedStatement.setInt(1, idUsuario);
+           
+
+            /*Usamos el metodo executeUpdate del objeto preparedStatement para realizar la sentencia insert*/
+            preparedStatement.executeUpdate();
+
+            
+            //Cerramos los recursos
+            preparedStatement.close();
+            return true;
+        } catch (SQLException ex)
+        {
+
+            //Manejamos la excepción imprimiendo el mensaje de error
+            ex.printStackTrace();
+            return false;
+
         }
     }
 
