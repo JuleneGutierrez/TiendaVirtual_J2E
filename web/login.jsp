@@ -1,8 +1,4 @@
-<%-- 
-    Document   : login
-    Created on : 18-feb-2024, 15:06:00
-    Author     : Julencia
---%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>

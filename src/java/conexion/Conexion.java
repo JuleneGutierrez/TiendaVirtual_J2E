@@ -29,8 +29,7 @@ import org.jboss.weld.servlet.SessionHolder;
  * @author Julencia
  */
 //@WebServlet(name = "conexion", urlPatterns = {"/conexion"})
-public class Conexion extends HttpServlet
-{
+public class Conexion extends HttpServlet {
 
     /*Declaramos una variable de tipo Connection de la clase DriverManager, para despues almacenar  donde despues*/
     Connection conexion;
@@ -41,30 +40,25 @@ public class Conexion extends HttpServlet
     private String contrasena;
 
     /*Constructor para conexion por defecto*/
-    public Conexion()
-    {
+    public Conexion() {
         /*Asigno a los atributos lo correspondiente que sera por defecto*/
         this.url = "jdbc:mysql://localhost/tienda";
         this.usuario = "root";
         this.contrasena = "";
 
-        try
-        {
+        try {
             /*Cargamos el driver JDBC para permitir una comunicacion con la base de datos*/
             Class.forName("com.mysql.jdbc.Driver").newInstance();
 
-        } catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
             // Imprimir un mensaje de error en la consola
             System.err.println("Error: No se pudo encontrar el driver de MySQL.");
 
-        } catch (InstantiationException ex)
-        {
+        } catch (InstantiationException ex) {
             // Imprimir un mensaje de error en la consola
             System.err.println("Error: No se pudo instanciar el driver de MySQL.");
 
-        } catch (IllegalAccessException ex)
-        {
+        } catch (IllegalAccessException ex) {
             // Imprimir un mensaje de error en la consola
             System.err.println("Error: No se pudo acceder.");
 
@@ -73,45 +67,37 @@ public class Conexion extends HttpServlet
     }
 
     /*Metodo usado para conectarse a la BD*/
-    public void conectarBD()
-    {
-        try
-        {
+    public void conectarBD() {
+        try {
             /*Nos conectamos a la bbdd usando la clase Connection */
             conexion = DriverManager.getConnection(this.url, this.usuario, this.contrasena);
 
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             System.err.println("Error al conectar a la base de datos: ");
         }
 
     }
 
     /*Metodo usado para desconectarse de la BD*/
-    public void desconectarBD()
-    {
-        try
-        {
+    public void desconectarBD() {
+        try {
             /*Se cierra la conexion*/
             conexion.close();
 
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             System.err.println("Error al desconectar a la base de datos");
         }
     }
 
     /*Metodo usado HACER CONSULTA*/
-    public ResultSet obtenerLibros()
-    {
+    public ResultSet obtenerLibros() {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
         conectarBD();
 
         /*Creamos un objeto statement*/
         Statement stmt;
 
-        try
-        {
+        try {
             /*Llamamos al metodo del objeto Connection createStatement*/
             // Paso 3: Crear sentencias SQL, utilizando objetos de tipo Statement
             stmt = conexion.createStatement();
@@ -125,23 +111,20 @@ public class Conexion extends HttpServlet
             /*Se retornan los datos de la sentencia SQL*/
             return rset;
 
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             return null;
         }
     }
 
     /*Metodo usado HACER CONSULTA
     COMENTARIO DE PRUEBA*/
-    public ResultSet verCredencial(String usuario, String contrasena)
-    {
+    public ResultSet verCredencial(String usuario, String contrasena) {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
         conectarBD();
 
         /*Creamos un objeto statement*/
         Statement stmt;
-        try
-        {
+        try {
             /*Llamamos al metodo del objeto Connection createStatement*/
             // Paso 3: Crear sentencias SQL, utilizando objetos de tipo Statement
             stmt = conexion.createStatement();
@@ -155,21 +138,18 @@ public class Conexion extends HttpServlet
             /*Se retornan los datos de la sentencia SQL*/
             return rset;
 
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             return null;
         }
     }
 
     /*METODO PARA REALIZAR UN INSERT EN LA BD*/
-    public void insertarUsuario(String nombre, String apellido, String usuario, String contrasena, String email, String telefono, String dni)
-    {
+    public boolean insertarUsuario(String nombre, String apellido, String usuario, String contrasena, String email, String telefono, String dni) {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
         conectarBD();
 
         //PreparedStatement preparedStatement = null;
-        try
-        {
+        try {
             //Preparamos la sentencia SQL con una sentencia preparada para evitar la inyección SQL
             String sqlStr = "INSERT INTO usuario (nombre, apellido, usuario, contrasena, email, telefono,dni) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = conexion.prepareStatement(sqlStr);
@@ -189,26 +169,22 @@ public class Conexion extends HttpServlet
             // System.out.println(preparedStatement.executeUpdate());
             //Cerramos los recursos
             preparedStatement.close();
-
+            return true;
             /*GESTIONAR CON UN IF SI PREPAREDSTATEMENT DEVUELVE FALSE QUE RETORNE UN MENSAJE, PARA ESO CAMBIAR EL METO DE VOID A STRING O ALGO*/
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
 
-            //Manejamos la excepción imprimiendo el mensaje de error
-            ex.printStackTrace();
+            return false;
 
         }
     }
 
     /*METODO PARA REALIZAR UN INSERT EN LA TABLA PEDIDOS, Y DETALLE PEDIDOSS EN LA  BD*/
-    public void insertarPedido(int idUsuario, double sumatorio, Cesta cesta)
-    {
+    public void insertarPedido(int idUsuario, double sumatorio, Cesta cesta) {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
         conectarBD();
 
         //PreparedStatement preparedStatement = null;
-        try
-        {
+        try {
 
             // INSERCION EN LA TABLA PEDIDOS EL ID DE USUARIO Y EL FACTURADO, YA QUE EL ESTADO ES POR DEFECTO
             /*Guardamos en sqlStr la consulta de insert de las columnas de id_usuario y facturado de la tabla pedido*/
@@ -243,8 +219,7 @@ public class Conexion extends HttpServlet
 
             //INSERCION DE LOS DETALLES PEDIDO, PARA ELLO HEMOS NECESITADO OBTENER EL ULTIMO PEDIDO (SELECT ANTERIOR)
             /*Recorremos el array de productos de la cesta del usuario*/
-            for (int i = 0; i < cesta.getArrayProductos().size(); i++)
-            {
+            for (int i = 0; i < cesta.getArrayProductos().size(); i++) {
                 /*Inser en detalle pedido, la columa del titulo del libro, el id  y su cantidad, ya que se mostrara desglosado en la BBDD */
                 sqlStr = "INSERT INTO detallepedido (tituloLibro,id_pedido,cantidad) VALUES (?,?,?)";
 
@@ -263,8 +238,7 @@ public class Conexion extends HttpServlet
             //Cerramos los recursos
             preparedStatement.close();
 
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
 
             //Manejamos la excepción imprimiendo el mensaje de error
             ex.printStackTrace();
@@ -274,31 +248,27 @@ public class Conexion extends HttpServlet
 
     /*Metodo usado HACER CONSULTA
     COMENTARIO DE PRUEBA*/
-    public ResultSet verPedidoC(int idUsuario, String opcionSelect)
-    {
+    public ResultSet verPedidoC(int idUsuario, String opcionSelect) {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
         conectarBD();
 
         /*Creamos un objeto statement*/
         Statement stmt;
-        try
-        {
+        try {
             /* Creo la variable donde guardar la consulta*/
             String sqlStr;
-            
+
             /*Si el usuario seleciona la opcion de todos enrta en el if y vera todos los pedidos que tenga mostrados en una tabla en 
             la cual tambien hemos extraido otros detalles realtivos al pedido por ello usamos el INNER JOIN, Hacemos el sumatorio del total de productos
             comprados con SUM y agrupamos por el id del pedido para que sea mas sencilla y logica la visualizacion */
-            if ("todos".equals(opcionSelect))
-            {
+            if ("todos".equals(opcionSelect)) {
                 sqlStr = "SELECT pedido.id_pedido, pedido.estadoPedido AS Estado, pedido.facturado AS TOTAL, "
                         + "SUM(detallePedido.cantidad) AS Articulos "
                         + "FROM pedido INNER JOIN detallePedido ON pedido.id_pedido = detallePedido.id_pedido "
                         + "WHERE pedido.id_usuario =" + idUsuario + " "
                         + "GROUP BY pedido.id_pedido, pedido.estadoPedido, pedido.facturado";
 
-            } else
-            {
+            } else {
                 /*Realizamos la consulta conforme al estado selecionado para que nos devuelva id de pedido, el estado del mismo, asi como el total del precio y la cantidad
                 de articulos totales que contiene el pedido*/
                 sqlStr = "SELECT pedido.id_pedido, pedido.estadoPedido AS Estado, pedido.facturado AS TOTAL, "
@@ -309,7 +279,7 @@ public class Conexion extends HttpServlet
 
             }
             /*Llamamos al metodo del objeto Connection createStatement*/
-            /*Crear sentencias SQL, utilizando objetos de tipo Statement*/
+ /*Crear sentencias SQL, utilizando objetos de tipo Statement*/
             stmt = conexion.createStatement();
 
             /*Se almacenan los datos de la consulta en el objeto ResultSet*/
@@ -318,30 +288,27 @@ public class Conexion extends HttpServlet
             /*Se retornan los datos de la sentencia SQL al controlador para gestionarlos como sea necesario*/
             return rset;
 
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             return null;
         }
     }
-    
+
     /*METODO PARA REALIZAR UN INSERT EN LA TABLA SOLICITUDES*/
-    public boolean insertarSolicitud(int idUsuario)
-    {
+    public boolean insertarSolicitud(int idUsuario) {
         /*Usamos el metodo encargado de iniciar la conexion con la BD*/
         conectarBD();
 
-        try
-        {
-            String sqlStr = "SELECT id_usuario FROM solicitudes WHERE id_usuario = ?" ;
+        try {
+            String sqlStr = "SELECT id_usuario FROM solicitudes WHERE id_usuario = ?";
 
             PreparedStatement preparedStatement = conexion.prepareStatement(sqlStr);
 
             preparedStatement.setInt(1, idUsuario);
             ResultSet rset = preparedStatement.executeQuery();
-            if(rset.next()){
+            if (rset.next()) {
                 return false;
             }
-            
+
             sqlStr = "INSERT INTO solicitudes (id_usuario) VALUES (?)";
 
             /*Usamos una consulta preparada utilizando el objeto PreparedStatement evitando asi la inyeccion de codigo SQL*/
@@ -349,22 +316,164 @@ public class Conexion extends HttpServlet
 
             /* Ahora si damos los prametros del insert*/
             preparedStatement.setInt(1, idUsuario);
-           
+
 
             /*Usamos el metodo executeUpdate del objeto preparedStatement para realizar la sentencia insert*/
             preparedStatement.executeUpdate();
 
-            
             //Cerramos los recursos
             preparedStatement.close();
             return true;
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
 
             //Manejamos la excepción imprimiendo el mensaje de error
             ex.printStackTrace();
             return false;
 
+        }
+    }
+
+    /*Metodo que obtiene las solicitudes para hacerse comprador en estado pendiente */
+    public ResultSet obtenerSolicitudesPendientes() {
+        /*Usamos el metodo encargado de iniciar la conexion con la BD*/
+        conectarBD();
+
+        /*Creamos un objeto statement*/
+        Statement stmt;
+
+        try {
+            /*Llamamos al metodo del objeto Connection createStatement*/
+            // Paso 3: Crear sentencias SQL, utilizando objetos de tipo Statement
+            stmt = conexion.createStatement();
+
+            // Paso 4: Ejecutar las sentencias SQL a traves de los objetos Statement
+            String sqlStr = " select * from solicitudes WHERE estado='pendiente'";
+
+            /*Se almacenan los datos en el objeto ResultSet*/
+            ResultSet rset = stmt.executeQuery(sqlStr);
+
+            /*Se retornan los datos de la sentencia SQL*/
+            return rset;
+
+        } catch (SQLException ex) {
+            return null;
+        }
+    }
+
+    public ResultSet obtenerPedidos(String filtro) {
+        /*Usamos el metodo encargado de iniciar la conexion con la BD*/
+        conectarBD();
+
+        /*Creamos un objeto statement*/
+        Statement stmt;
+
+        try {
+            /*Llamamos al metodo del objeto Connection createStatement*/
+            // Paso 3: Crear sentencias SQL, utilizando objetos de tipo Statement
+            stmt = conexion.createStatement();
+
+            String sqlStr = "";
+            // Paso 4: Ejecutar las sentencias SQL a traves de los objetos Statement
+
+            if (filtro == null || filtro.equals("todos")) {
+                sqlStr = "SELECT pedido.id_usuario, pedido.id_pedido, pedido.estadoPedido AS Estado, pedido.facturado AS TOTAL,  "
+                        + " SUM(detallePedido.cantidad) AS Articulos FROM pedido "
+                        + " INNER JOIN detallePedido ON pedido.id_pedido = detallePedido.id_pedido "
+                        + " GROUP BY pedido.id_usuario, pedido.id_pedido, pedido.estadoPedido, pedido.facturado ";
+            } else {
+                sqlStr = "SELECT pedido.id_usuario, pedido.id_pedido, pedido.estadoPedido AS Estado, pedido.facturado AS TOTAL, "
+                        + " SUM(detallePedido.cantidad) AS Articulos FROM pedido "
+                        + " INNER JOIN detallePedido ON pedido.id_pedido = detallePedido.id_pedido "
+                        + " WHERE pedido.estadoPedido = '" + filtro + "' GROUP BY pedido.id_usuario, pedido.id_pedido, pedido.estadoPedido, pedido.facturado ";
+
+            }
+
+
+            /*Se almacenan los datos en el objeto ResultSet*/
+            ResultSet rset = stmt.executeQuery(sqlStr);
+
+            /*Se retornan los datos de la sentencia SQL*/
+            return rset;
+
+        } catch (SQLException ex) {
+            return null;
+        }
+    }
+
+    /*Metodo que modificar el rol de un usario a comprador*/
+    public boolean modificarRol(String idUsuario) {
+        conectarBD();
+        PreparedStatement preparedStatement = null;
+        try {
+            // Consulta SQL parametrizada
+            String consultaUsuarioExistente = "SELECT id_usuario FROM solicitudes WHERE id_usuario = ?";
+            String updateSolicitud = " UPDATE solicitudes SET estado='confirmado' WHERE id_usuario=?";
+            String updateUsuario = " UPDATE usuario SET rol='comprador' WHERE id_usuario=?";
+            // Verificar si el usuario existe
+            preparedStatement = conexion.prepareStatement(consultaUsuarioExistente);
+            preparedStatement.setString(1, idUsuario);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (!resultSet.next()) {
+                // Usuario no encontrado
+                return false;
+            }
+
+            // Actualizar la solicitud del usuario
+            preparedStatement = conexion.prepareStatement(updateSolicitud);
+            preparedStatement.setString(1, idUsuario);
+            preparedStatement.executeUpdate();
+
+            // Actualizar el rol del usuario
+            preparedStatement = conexion.prepareStatement(updateUsuario);
+            preparedStatement.setString(1, idUsuario);
+            preparedStatement.executeUpdate();
+
+            return true;
+        } catch (SQLException ex) {
+            // Manejo de excepciones
+            ex.printStackTrace();
+            return false;
+        } finally {
+            // Cerrar recursos en un bloque finally
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public boolean modificarEstado(String rol, String pedidosSeleccionado) {
+        conectarBD();
+        PreparedStatement preparedStatement = null;
+        try {
+            // Consulta SQL parametrizada
+            String updateSolicitud = "UPDATE pedido SET estadoPedido=? WHERE id_pedido = ?";
+
+            // Actualizar la solicitud del usuario
+            preparedStatement = conexion.prepareStatement(updateSolicitud);
+            preparedStatement.setString(1, rol);
+            preparedStatement.setString(2, pedidosSeleccionado);
+
+            preparedStatement.executeUpdate();
+
+            return true;
+        } catch (SQLException ex) {
+            // Manejo de excepciones
+            ex.printStackTrace();
+            return false;
+        } finally {
+            // Cerrar recursos en un bloque finally
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

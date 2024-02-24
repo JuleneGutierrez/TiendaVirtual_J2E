@@ -12,6 +12,7 @@ import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -21,7 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import modelo.Cesta;
+import modelo.DetallePedido;
+import modelo.Pedido;
 import modelo.Producto;
+import modelo.Solicitud;
 
 /*Importamos la clase producto para poder hacer uso de ello*/
 /**
@@ -29,6 +33,16 @@ import modelo.Producto;
  * @author Julencia
  */
 public class ServerControlador extends HttpServlet {
+
+    private static String MENU = "/menu.jsp";
+    private static String LOGIN = "/login.jsp";
+    private static String REGISTRO = "//registro.jsp";
+    private static String CATALOGO = "/catalogo.jsp";
+    private static String PAGAR = "/pagar.jsp";
+    private static String PREVISUALIZACION = "/previsualizacion.jsp";
+    private static String VER_PEDIDOS_COMPRADOR = "/verPedidosC.jsp";
+    private static String VER_PEDIDOS_VENDEDOR = "/verPedidosv.jsp";
+    private static String VER_SOLICTUDES = "/verSolicitudes.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -100,15 +114,40 @@ public class ServerControlador extends HttpServlet {
                         A MENU Y SI NO ES NINGUNO (ELSE) REDIRECCION A LOGIN Y DESTRUCCION DE SESIONS*/
  /*Al igual que en php desde aqui ya redirigimos al usuario en caso de ser rol invitado*/
                         if ("invitado".equals(rol)) {
-                            ruta = "/previsualizacion.jsp";
+                            ResultSet recogerLibros = conexion.obtenerLibros();
+                            /*Creo el arrayList de productos llamado todosLibros*/
+                            ArrayList<Producto> todosLibros = new ArrayList();
+
+                            try {
+                                /*Uso el metodo .next() para recoger los registros extraidos por resulset */
+                                while (recogerLibros.next()) {
+                                    String ptitulo = recogerLibros.getString("titulo");
+                                    String pautor = recogerLibros.getString("autor");
+                                    String peditorial = recogerLibros.getString("editorial");
+                                    double pPrecio = recogerLibros.getDouble("precio");
+
+                                    /*Creo un nuevo Objeto producto con los datos correspondientes a cada libro de la BD */
+                                    Producto datosLibro = new Producto(ptitulo, pPrecio, pautor, peditorial);
+
+                                    /*Añado al arrayList creado el producto creado con la informacion de los libros extraidos de la Bd*/
+                                    todosLibros.add(datosLibro);
+
+                                }
+                            } catch (SQLException e) {
+                                System.out.println(e.getMessage());
+                            }
+
+                            session.setAttribute("libros", todosLibros);
+
+                            ruta = PREVISUALIZACION;
                         } else {
                             /*En caso de que sea cualquier otro rol se ira al menu*/
-                            ruta = "/menu.jsp";
+                            ruta = MENU;
                         }
 
                     } else {
                         System.out.println("¡Credenciales INCORRECTAS!");
-                        ruta = "/login.jsp";
+                        ruta = LOGIN;
 
                     }
                 } catch (SQLException ex) {
@@ -118,8 +157,9 @@ public class ServerControlador extends HttpServlet {
 
                 /*GESTION BOTON REGISTRARSE (DE LOGIN.JSP)  */
             } else if ("Registrarse".equals(botonSeleccionado)) {
-                ruta = "/registro.jsp";
-
+                ruta = REGISTRO;
+            } else if ("Volver al login".equals(botonSeleccionado)) {
+                ruta = LOGIN;
                 /*GESTION BOTON CONFIRMAR (DE REGISTRO.JSP)COMPRADOR */
             } else if ("Confirmar".equals(botonSeleccionado)) {
 
@@ -142,13 +182,19 @@ public class ServerControlador extends HttpServlet {
                 System.out.println(dni);
 
                 /*Utilizamos el metodo creado insertarUsuario y le pasamos por parametro las variables con los datos recogidos del formulario*/
-                conexion.insertarUsuario(nombre, apellido, nombreRegistro, contrasena, email, telefono, dni);
+                boolean comprobante = conexion.insertarUsuario(nombre, apellido, nombreRegistro, contrasena, email, telefono, dni);
+                if (comprobante) {
 
-                ruta = "/menu.jsp";
+                    ruta = MENU;
+                } else {
+                    session.setAttribute("registroError", "No se pudo crear el regitro, introduce otro usurio");
+                    ruta = REGISTRO;
+                }
+
 
                 /*GESTION BOTON COMPRAR (DEL MENU.JSP)COMPRADOR */
             } else if ("Comprar".equals(botonSeleccionado)) {
-                ruta = "/catalogo.jsp";
+                ruta = CATALOGO;
 
                 /*Para enviar el array de libros a traves de la session necesito extraer los registros reogidos por resulset y meterlos en el aaray
                 list de productos,para ello uso el metodo creado  de obtener libros*/
@@ -181,7 +227,7 @@ public class ServerControlador extends HttpServlet {
 
                 /*GESTION BOTON CHECKOUT DE LA CESTA (CATALOGO.JSP) COMPRADOR*/
             } else if ("Checkout".equals(botonSeleccionado)) {
-                ruta = "/pagar.jsp";
+                ruta = PAGAR;
 
                 /*GESTION BOTON PAGAR CESTA (PAGAR.JSP)COMPRADOR*/
             } else if ("Pagar".equals(botonSeleccionado)) {
@@ -196,12 +242,12 @@ public class ServerControlador extends HttpServlet {
                 conexion.insertarPedido(idUsuario, sumatorio, cesta);
 
                 /*Una vez que ha pulsado pagar en pago le lleva al menu */
-                ruta = "/menu.jsp";
+                ruta = MENU;
 
                 /*GESTION BOTON ESTADO PEDIDO (MENU.JSP) COMPRADOR*/
             } else if ("EstadoPedido".equals(botonSeleccionado)) {
 
-                ruta = "/verPedidosC.jsp";
+                ruta = VER_PEDIDOS_COMPRADOR;
 
                 /*GESTION BOTON DE FILTRAR PEDIDOS (VERPEDIDOS.JSP) COMPRADOR*/
             } else if ("Filtrar Pedido".equals(botonSeleccionado)) {
@@ -217,24 +263,64 @@ public class ServerControlador extends HttpServlet {
 
                 request.setAttribute("pedidos", pedidos);
 
-                ruta = "/verPedidosC.jsp";
+                ruta = VER_PEDIDOS_COMPRADOR;
             } //PREVISUALIZACIÓN
             else if ("Salir".equals(botonSeleccionado)) {
-                ruta = "/login.jsp";
+                ruta = LOGIN;
             } else if ("Cambiar Rol".equals(botonSeleccionado)) {
                 int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
-                System.out.println("id_usuario " + idUsuario);
 
                 /*Llamamos al metodo para insertar el pedido pagado del usuario */
                 boolean respuestaInsertarSolicitud = conexion.insertarSolicitud(idUsuario);
                 if (!respuestaInsertarSolicitud) {
-                    response.setContentType("text/html");
-                    response.getWriter().println("<p>Error: La condición es falsa</p>");
+                    request.setAttribute("mensajeCambiarRol", "Su solicitud fue envida");
+                }else{
+                    request.setAttribute("mensajeCambiarRol", "Fallo, ya existe una solicitud pendiente");
                 }
-                ruta = "/previsualizacion.jsp";
+                ruta = PREVISUALIZACION;
 
+            } //VENDEDOR
+            else if ("verSolicitudes".equals(botonSeleccionado)) {
+                obtenerSolicitudes(conexion, session);
+
+                ruta = VER_SOLICTUDES;
+
+            } else if ("Cambiar de Rol".equals(botonSeleccionado)) {
+
+                String[] solicitudesSeleccionadas = request.getParameterValues("opciones");
+
+                for (int i = 0; i < solicitudesSeleccionadas.length; i++) {
+                    conexion.modificarRol(solicitudesSeleccionadas[i]);
+                }
+                obtenerSolicitudes(conexion, session);
+                ruta = VER_SOLICTUDES;
+
+            } else if ("Volver al menu".equals(botonSeleccionado)) {
+                ruta = MENU;
+
+            } else if ("Cambiar Estados".equals(botonSeleccionado)) {
+                //primera vez al entrar
+                String filtro = request.getParameter("opcion");
+                obtenerEstadoPedidos(conexion, session, filtro);
+                ruta = VER_PEDIDOS_VENDEDOR;
+            } else if ("Modificar Rol".equals(botonSeleccionado)) {
+                //obtenemos el filtro actual
+                String filtro = request.getParameter("opcion");
+                //Obtenemos los dedidos marcados
+                String[] pedidosSeleccionados = request.getParameterValues("opciones");
+                //obtenemos el rol a cambiar
+                String rol = request.getParameter("rol");
+                for (int i = 0; i < pedidosSeleccionados.length; i++) {
+                    conexion.modificarEstado(rol, pedidosSeleccionados[i]);
+                }
+
+                obtenerEstadoPedidos(conexion, session, filtro);
+                ruta = VER_PEDIDOS_VENDEDOR;
+            } else if ("Filtrar estado".equals(botonSeleccionado)) {
+                String filtro = request.getParameter("opcion");
+                obtenerEstadoPedidos(conexion, session, filtro);
+                ruta = VER_PEDIDOS_VENDEDOR;
             }
-
             /*Redirigo la peticion */
             rd = getServletContext().getRequestDispatcher(ruta);
             rd.forward(request, response);
@@ -290,5 +376,60 @@ public class ServerControlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void obtenerSolicitudes(Conexion conexion, HttpSession session) {
+        ResultSet recogerSolicitudes = conexion.obtenerSolicitudesPendientes();
+        /*Creo el arrayList de productos llamado solicitudes*/
+        ArrayList<Solicitud> solicitudes = new ArrayList();
+
+        try {
+            /*Uso el metodo .next() para recoger los registros extraidos por resulset */
+            while (recogerSolicitudes.next()) {
+                String idSolicitud = recogerSolicitudes.getString("id_solicitud");
+                String idUsuario = recogerSolicitudes.getString("id_usuario");
+                String estado = recogerSolicitudes.getString("estado");
+                Date fechaSolicitud = recogerSolicitudes.getDate("fecha_solicitud");
+                /*Creo un nuevo Objeto producto con los datos correspondientes a cada libro de la BD */
+                Solicitud solicitud = new Solicitud(idSolicitud, idUsuario, estado, fechaSolicitud, null);
+
+                /*Añado al arrayList creado la solicitud creada con la informacion de los libros extraidos de la Bd*/
+                solicitudes.add(solicitud);
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        session.setAttribute("solicitudes", solicitudes);
+    }
+
+    private void obtenerEstadoPedidos(Conexion conexion, HttpSession session, String filtro) {
+
+        ResultSet recogerEstadoPedidos = conexion.obtenerPedidos(filtro);
+        /*Creo el arrayList de productos llamado solicitudes*/
+        ArrayList<Pedido> estadoPedidos = new ArrayList();
+
+        try {
+            /*Uso el metodo .next() para recoger los registros extraidos por resulset */
+            while (recogerEstadoPedidos.next()) {
+                Integer idUsuario = recogerEstadoPedidos.getInt("pedido.id_usuario");
+                Integer idPedido = recogerEstadoPedidos.getInt("pedido.id_pedido");
+                String estado = recogerEstadoPedidos.getString("Estado");
+                Double total = recogerEstadoPedidos.getDouble("TOTAL");
+                Integer articulos = recogerEstadoPedidos.getInt("Articulos");
+                /*Creo un nuevo Objeto estado pedido con los datos correspondientes a cada libro de la BD */
+                DetallePedido detallePedido = new DetallePedido(null, null, null, articulos);
+                Pedido estadoPedido = new Pedido(idUsuario, idPedido, estado, total, detallePedido);
+
+                /*Añado al arrayList creado la solicitud creada con la informacion de los libros extraidos de la Bd*/
+                estadoPedidos.add(estadoPedido);
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        session.setAttribute("estadoPedidos", estadoPedidos);
+    }
 
 }

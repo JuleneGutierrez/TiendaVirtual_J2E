@@ -1,5 +1,6 @@
 
-
+<%@page import="java.util.ArrayList"%>
+<%@page import="modelo.Producto"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -54,10 +55,46 @@
     </head>
     <body>
         <h1>ESTAS EN PREVISUALIZACION</h1>
+        <%
+            String prueba = (String) session.getAttribute("mensajeCambiarRol");
+
+            String errorRegistro = (String) session.getAttribute("mensajeCambiarRol");%>
+             <p><%=errorRegistro%></p>
+
+            <%
+
+        %>
+        <hr>
+        <h2>Títulos Disponibles en Catálogo</h2>
+        <table>
+            <tr>
+                <th>Titulo</th>
+                <th>Autor</th>
+                <th>Precio</th>
+                <th>Editorial</th>
+            </tr>
+            <%                /*Creamos un arraylist para guardar libros de la BD*/
+                ArrayList<Producto> libros = (ArrayList<Producto>) session.getAttribute("libros");
+
+                /*Recorremos el tamaño del arraylist que contiene todos los libros que se encuentran en la base de datos*/
+                for (int i = 0; i < libros.size(); i++) {
+            %>
+
+            <tr>
+                <td><%=libros.get(i).getTitulo()%></td>
+                <td><%=libros.get(i).getAutor()%></td>
+                <td><%=libros.get(i).getPrecio()%></td>
+                <td><%=libros.get(i).getEditorial()%></td>
+            </tr>
+
+
+            <% }%>
+
+        </table>
 
         <hr>
-
         <br>
+
         <form method="POST" action="ServerControlador">
             <label for="solicitudes">¿Te gustaría comprar? Solicita el cambio</label><br>
             <input type="submit" name="enviar" value="Cambiar Rol" />

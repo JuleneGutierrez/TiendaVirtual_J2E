@@ -27,7 +27,7 @@
                 { %>
 
             <input type="submit" value="verSolicitudes" name="enviar" />
-            <input type="submit" value="CambiarEstados" name="enviar" />
+            <input type="submit" value="Cambiar Estados" name="enviar" />
 
             <% } else if ("comprador".equals(session.getAttribute("rol")))
             { %>
