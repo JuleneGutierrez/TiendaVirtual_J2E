@@ -55,6 +55,7 @@
         </style>
     </head>
     <body>
+        <%if (session.getAttribute("rol") != null && session.getAttribute("rol").equals("comprador")) {%>
         <h1>PEDIDOS REALIZADOS</h1>
         <!-- FORMULARIO QUE CONTIENE EL SELECT CON LAS OPCIONES DE FILTRADO DE PEDIDOS DISPONIBLES -->
         <br><form action="ServerControlador" method="POST">
@@ -113,5 +114,6 @@
             <input type="submit" name="enviar" value="Volver al menu" />
 
         </form><br>
+        <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

@@ -65,6 +65,7 @@ and open the template in the editor.
 
     </head>
     <body>
+        <%if (session.getAttribute("rol") != null && session.getAttribute("rol").equals("comprador")) {%>
         <%
             /* Obtenemos en la variable cestaGuarda, la cesta con los productos seleccionados por el usuarios para comprar, de la variable
             de sesion cesta. Es necesario castearlo porque en si java no sabe que tipo de objeto contiene ese variable de sesion*/
@@ -128,6 +129,6 @@ and open the template in the editor.
             <input type="submit" name="enviar" value="Volver al Catalogo" />
 
         </form><br>
-
+        <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

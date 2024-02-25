@@ -62,6 +62,7 @@
         </style>
     </head>
     <body>
+        <%if (session.getAttribute("rol") != null && session.getAttribute("rol").equals("vendedor")) {%>
         <h1>Cambiar estados de los pedidos</h1><hr>
 
         <form method="POST" action="ServerControlador">
@@ -114,7 +115,13 @@
             </table>
 
             <br><hr><br>
+            <%
+                String mensaje = (String) session.getAttribute("mensajeModificacion");
+                if (mensaje != null) {
 
+                    out.print(mensaje);
+                }
+            %>
 
             <label for="estado">Cambiar a:</label>
             <select name="estado" id="estado">
@@ -132,5 +139,6 @@
             <input type="submit" name="enviar" value="Volver al menu" />
 
         </form><br>
+        <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

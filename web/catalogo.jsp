@@ -69,6 +69,7 @@
 
     </head>
     <body>
+        <%if (session.getAttribute("rol") != null && session.getAttribute("rol").equals("comprador")) {%>
         <h1>ESTAS EN CATALOGO</h1>
 
         <form name="enviar" action="catalogo.jsp" method="POST">
@@ -203,5 +204,6 @@
             <input type="submit" name="enviar" value="Volver al menu" />
 
         </form><br>
+        <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

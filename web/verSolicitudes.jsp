@@ -1,3 +1,4 @@
+
 <%@page import="java.util.ArrayList"%>
 <%@page import="modelo.Solicitud"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -61,16 +62,16 @@
         </style>
     </head>
     <body>
+        <%if (session.getAttribute("rol") != null && session.getAttribute("rol").equals("vendedor")) {%>
         <h1>ESTAS EN VER SOLICITUDES</h1>
         <%
-            
+
             String insolicitud = (String) session.getAttribute("mensajeNoSolicitud");
-            if ( insolicitud != null) {
+            if (insolicitud != null) {
 
                 out.print(insolicitud);
             }
 
-        
             ArrayList<Solicitud> solicitudes = (ArrayList<Solicitud>) session.getAttribute("solicitudes");
             if (!solicitudes.isEmpty()) {
         %>          
@@ -118,6 +119,6 @@
 
 
 
-
+        <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

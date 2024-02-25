@@ -136,9 +136,12 @@ public class ServerControlador extends HttpServlet {
                             session.setAttribute("libros", todosLibros);
 
                             ruta = PREVISUALIZACION;
-                        } else {
+                        } else if ("comprador".equals(rol) || "vendedor".equals(rol)){
                             /*En caso de que sea cualquier otro rol se ira al menu*/
                             ruta = MENU;
+                        } else {
+                            session.invalidate();
+                            ruta = LOGIN;
                         }
 
                     } else {
@@ -155,6 +158,7 @@ public class ServerControlador extends HttpServlet {
                 /*GESTION BOTON REGISTRARSE (DE LOGIN.JSP)  */
             } else if ("Registrarse".equals(botonSeleccionado)) {
                 ruta = REGISTRO;
+                session.setAttribute("registroMensaje",null);
             } else if ("Volver al login".equals(botonSeleccionado)) {
                 ruta = LOGIN;
                 /*GESTION BOTON CONFIRMAR (DE REGISTRO.JSP)COMPRADOR */
@@ -184,7 +188,7 @@ public class ServerControlador extends HttpServlet {
                     session.setAttribute("registroMensaje", "El usuario " + nombreRegistro + " fue guardado correctamente");
                     ruta = REGISTRO;
                 } else {
-                    session.setAttribute("registroMensaje", "No se pudo crear el regitro, introduce otro usurio");
+                    session.setAttribute("registroMensaje", "No se pudo crear el registro, introduce otro usuario");
                     ruta = REGISTRO;
                 }
 
@@ -234,10 +238,12 @@ public class ServerControlador extends HttpServlet {
                 int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
                 double sumatorio = (double) session.getAttribute("sumatorio");
                 Cesta cesta = (Cesta) session.getAttribute("cesta");
-
+                
+                session.setAttribute("cesta",null);
+                
                 /*Llamamos al metodo para insertar el pedido pagado del usuario */
                 conexion.insertarPedido(idUsuario, sumatorio, cesta);
-
+                
                 /*Una vez que ha pulsado pagar en pago le lleva al menu */
                 ruta = MENU;
 
@@ -268,31 +274,32 @@ public class ServerControlador extends HttpServlet {
             } else if ("Cambiar Rol".equals(botonSeleccionado)) {
                 int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
 
-                /*Llamamos al metodo para insertar el pedido pagado del usuario */
+                /*Comprobamos que se ha insertado una solicitud, si se ha hecho se indica mensaje */
                 boolean respuestaInsertarSolicitud = conexion.insertarSolicitud(idUsuario);
-                if (!respuestaInsertarSolicitud) {
-                    request.setAttribute("mensajeCambiarRolInvitado", "Su solicitud fue enviada");
+                if (respuestaInsertarSolicitud) {
+                    session.setAttribute("mensajeCambiarRolInvitado", "Su solicitud fue enviada");
                 } else {
-                    request.setAttribute("mensajeCambiarRolInvitado", "Ya existe una solicitud pendiente");
+                    session.setAttribute("mensajeCambiarRolInvitado", "Ya existe una solicitud pendiente");
                 }
                 ruta = PREVISUALIZACION;
 
             } //VENDEDOR
             else if ("verSolicitudes".equals(botonSeleccionado)) {
                 obtenerSolicitudes(conexion, session);
-
+                session.setAttribute("mensajeNoSolicitud",null);
                 ruta = VER_SOLICTUDES;
 
             } else if ("Cambiar de Rol".equals(botonSeleccionado)) {
 
                 String[] solicitudesSeleccionadas = request.getParameterValues("opciones");
-
+                session.setAttribute("mensajeNoSolicitud",null);
                 if (solicitudesSeleccionadas != null) {
                     for (int i = 0; i < solicitudesSeleccionadas.length; i++) {
                         conexion.modificarRol(solicitudesSeleccionadas[i]);
                     }
+                    session.setAttribute("mensajeNoSolicitud","Se ha procesado la solicitud<br><br>");
                 } else {
-                    request.setAttribute("mensajeNoSolicitud", "No has seleccionado ninguna solicitud a modificar");
+                    session.setAttribute("mensajeNoSolicitud", "No has seleccionado ninguna solicitud a modificar<br><br>");
                 }
                 obtenerSolicitudes(conexion, session);
                 ruta = VER_SOLICTUDES;
@@ -306,6 +313,7 @@ public class ServerControlador extends HttpServlet {
                 //primera vez al entrar
                 String filtro = request.getParameter("opcion");
                 obtenerEstadoPedidos(conexion, session, filtro);
+                session.setAttribute("mensajeModificacion",null);
                 ruta = VER_PEDIDOS_VENDEDOR;
             } else if ("Modificar Estado".equals(botonSeleccionado)) {
                 //obtenemos el filtro actual
@@ -314,12 +322,13 @@ public class ServerControlador extends HttpServlet {
                 String[] pedidosSeleccionados = request.getParameterValues("opciones");
                 //obtenemos el rol a cambiar
                 String estado = request.getParameter("estado");
+                session.setAttribute("mensajeModificacion", "Se ha modificado la solicitud con éxito<br><br>");
                 if (pedidosSeleccionados != null) {
                     for (int i = 0; i < pedidosSeleccionados.length; i++) {
                         conexion.modificarEstado(estado, pedidosSeleccionados[i]);
                     }
                 } else {
-                    request.setAttribute("mensajeModificacion", "No has seleccionado ninguna solicitud a modificar");
+                    session.setAttribute("mensajeModificacion", "No has seleccionado ninguna solicitud a modificar<br><br>");
                 }
 
                 obtenerEstadoPedidos(conexion, session, filtro);

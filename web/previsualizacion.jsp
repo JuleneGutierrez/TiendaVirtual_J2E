@@ -58,6 +58,7 @@
         </style>
     </head>
     <body>
+        <%if (session.getAttribute("rol") != null && session.getAttribute("rol").equals("invitado")) {%>
         <h1>ESTAS EN PREVISUALIZACION</h1>
         <%
             String mensaje = (String) session.getAttribute("mensajeCambiarRolInvitado");
@@ -109,5 +110,6 @@
             <input type="submit" name="enviar" value="Salir" />
 
         </form><br>
+        <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

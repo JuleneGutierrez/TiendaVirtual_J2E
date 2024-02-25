@@ -278,6 +278,9 @@ public class Conexion extends HttpServlet {
                         + "GROUP BY pedido.id_pedido, pedido.estadoPedido, pedido.facturado";
 
             }
+            
+            System.out.println(sqlStr);
+            
             /*Llamamos al metodo del objeto Connection createStatement*/
  /*Crear sentencias SQL, utilizando objetos de tipo Statement*/
             stmt = conexion.createStatement();
