@@ -17,7 +17,7 @@
             }
 
             input:hover {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             table{
@@ -32,7 +32,7 @@
             }
 
             th {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             td {
@@ -96,21 +96,20 @@
             <input type="submit" value="Cambiar de Rol" name="enviar" />
         </form>
         <%
-      }else {
-        out.print("No hay solicitutes disponibles");
-       }
+            } else {
+                out.print("No hay solicitutes disponibles");
+            }
 
         %>  
-        <br><br>
+        <br><hr>
         <form method="POST" action="ServerControlador">
-
+            <label for="vueltaMenu">¿Qué más necesitas hacer?</label><br>
             <input type="submit" name="enviar" value="Volver al menu" />
 
         </form><br>
-    </form>
 
 
 
 
-</body>
+    </body>
 </html>

@@ -5,22 +5,46 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Login</title>
+        <style>
+            * {
+                font-family: Helvetica, Verdana, sans-serif;
+                text-align: center;
+            }
+
+            input {
+                border-radius: 4px;
+            }
+
+            input:hover {
+                background-color: palevioletred;
+            }
+
+            h1 {
+                color: darkred;
+            }
+
+
+        </style>
     </head>
     <body>
-       
-        <h1>Iniciar Sesion</h1>
-        
-        <form method="POST" action="ServerControlador">
-            Usuario: 
-            <input type="text" name="usuario" value=""/><br><br>
-            Contraseña:
-            <input type="password" name="contrasena" value=""/><br><br>
-            
-            <input type="submit" value="Registrarse" name="enviar"/>
-            <input type="submit" value="Entrar" name="enviar"/>
 
+        <h1>Iniciar Sesion</h1>
+        <hr>
+        <h3>Accede y encuentra lo que buscas</h3>
+
+        <form method="POST" action="ServerControlador">
+            Usuario:<br> 
+            <input type="text" name="usuario" value=""/><br><br>
+            Contraseña:<br>
+            <input type="password" name="contrasena" value=""/><br><br>
+
+            <input type="submit" value="Entrar" name="enviar"/>
+            <br>
+            <hr>
+            <p>¿No tienes una cuenta? Registrate aquí</p>
+            <input type="submit" value="Registrarse" name="enviar"/>
         </form>
-    
+
     </body>
 </html>

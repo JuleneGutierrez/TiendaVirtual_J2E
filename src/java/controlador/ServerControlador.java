@@ -41,7 +41,7 @@ public class ServerControlador extends HttpServlet {
     private static String PAGAR = "/pagar.jsp";
     private static String PREVISUALIZACION = "/previsualizacion.jsp";
     private static String VER_PEDIDOS_COMPRADOR = "/verPedidosC.jsp";
-    private static String VER_PEDIDOS_VENDEDOR = "/verPedidosv.jsp";
+    private static String VER_PEDIDOS_VENDEDOR = "/verPedidosV.jsp";
     private static String VER_SOLICTUDES = "/verSolicitudes.jsp";
 
     /**
@@ -297,8 +297,11 @@ public class ServerControlador extends HttpServlet {
 
             } else if ("Volver al menu".equals(botonSeleccionado)) {
                 ruta = MENU;
-
-            } else if ("Cambiar Estados".equals(botonSeleccionado)) {
+                
+            } else if ("Volver al Catalogo".equals(botonSeleccionado)){
+                ruta = CATALOGO;
+            }
+            else if ("Cambiar Estados".equals(botonSeleccionado)) {
                 //primera vez al entrar
                 String filtro = request.getParameter("opcion");
                 obtenerEstadoPedidos(conexion, session, filtro);

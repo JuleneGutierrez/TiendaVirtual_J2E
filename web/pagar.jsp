@@ -20,7 +20,7 @@ and open the template in the editor.
             }
 
             input:hover {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             table{
@@ -35,7 +35,7 @@ and open the template in the editor.
             }
 
             th {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             td {
@@ -119,11 +119,12 @@ and open the template in the editor.
         </form>
         <br><br>
 
-        <hr><hr>
-        <a href="catalogo.jsp">Volver</a>
-        <hr><hr>
+        <br><hr>
+        <form method="POST" action="ServerControlador">
+            <label for="vueltaCatalogo">¿Quieres cambiar algo?</label><br>
+            <input type="submit" name="enviar" value="Volver al Catalogo" />
 
-        <br><a href="login.jsp">Volver al Login</a><br><br>
+        </form><br>
 
     </body>
 </html>

@@ -18,7 +18,7 @@
             }
 
             input:hover {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             table{
@@ -33,7 +33,7 @@
             }
 
             th {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             td {
@@ -125,5 +125,12 @@
             </select>
             <input type="submit" name="enviar" value="Modificar Rol"> 
         </form>
+
+        <br><hr>
+        <form method="POST" action="ServerControlador">
+            <label for="vueltaMenu">¿Qué más necesitas hacer?</label><br>
+            <input type="submit" name="enviar" value="Volver al menu" />
+
+        </form><br>
     </body>
 </html>

@@ -1,8 +1,4 @@
-<%-- 
-    Document   : catalogo
-    Created on : 20-feb-2024, 0:43:06
-    Author     : Julencia
---%>
+
 
 <%@page import="modelo.GestionCesta"%>
 <%@page import="java.util.Map"%>
@@ -28,7 +24,7 @@
             }
             
             input:hover {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             table{
@@ -43,7 +39,7 @@
             }
 
             th {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             td {
@@ -119,7 +115,7 @@
             </table>
 
             <br>
-            <input type="submit" value="agregar" name="enviar" />
+            <input type="submit" value="agregar" name="enviar" /><br><br><hr>
 
 
         </form>
@@ -201,6 +197,11 @@
 
             }
         %>
+        <br><hr>
+        <form method="POST" action="ServerControlador">
+            <label for="vueltaMenu">¿Qué más necesitas hacer?</label><br>
+            <input type="submit" name="enviar" value="Volver al menu" />
 
+        </form><br>
     </body>
 </html>

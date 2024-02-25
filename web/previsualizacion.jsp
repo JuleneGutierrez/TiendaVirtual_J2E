@@ -18,7 +18,11 @@
             }
 
             input:hover {
-                background-color: lightskyblue;
+                background-color: palevioletred;
+            }
+
+            h1, h2 {
+                color: darkred;
             }
 
             table{
@@ -34,7 +38,7 @@
             }
 
             th {
-                background-color: lightskyblue;
+                background-color: palevioletred;
             }
 
             td {
@@ -102,7 +106,7 @@
         <!-- Formulario con un boton para salir, al pulsarlo se redirige al login y se cierra la sesion(Gestionado en el login el cierre de sesion) -->
         <hr>
         <form method="POST" action="ServerControlador">
-
+            <label for="salida">¿Ya terminaste?</label><br>
             <input type="submit" name="enviar" value="Salir" />
 
         </form><br>
