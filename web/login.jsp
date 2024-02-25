@@ -32,7 +32,15 @@
         <h1>Iniciar Sesion</h1>
         <hr>
         <h3>Accede y encuentra lo que buscas</h3>
+        <%
+            String login = (String) session.getAttribute("loginMensaje");
+            if (login != null) {
 
+                out.print(login);
+            }
+
+        %>
+        <br>
         <form method="POST" action="ServerControlador">
             Usuario:<br> 
             <input type="text" name="usuario" value=""/><br><br>

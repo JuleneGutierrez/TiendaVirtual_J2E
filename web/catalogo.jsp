@@ -105,7 +105,7 @@
                     </td>
                     <td><%=libros.get(i).getTitulo()%></td>
                     <td><%=libros.get(i).getAutor()%></td>
-                    <td><%=libros.get(i).getPrecio()%></td>
+                    <td><%=String.format("%.2f", libros.get(i).getPrecio())%> €</td>
                     <td><%=libros.get(i).getEditorial()%></td>
                 </tr>
 
@@ -175,7 +175,7 @@
 
                 <tr>
                     <td><%=nuevaCesta.getArrayProductos().get(i).getTitulo()%></td>
-                    <td><%=nuevaCesta.getArrayProductos().get(i).getPrecio()%></td>
+                    <td><%=String.format("%.2f", nuevaCesta.getArrayProductos().get(i).getPrecio())%> €</td>
                     <td><%=nuevaCesta.getArrayProductos().get(i).getCantidad()%></td>
                     <td><button type="submit" value="<%=i%>" name="borrar">Eliminar</button></td> <!-- Se guarda el valor de la posicion en el array dentro de cesta -->
                 </tr>

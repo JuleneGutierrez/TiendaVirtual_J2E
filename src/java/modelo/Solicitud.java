@@ -1,10 +1,11 @@
 
 package modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
-public class Solicitud {
+public class Solicitud implements Serializable{
     private String idSolicitud;
     private String idUsuario;
     private String estado;

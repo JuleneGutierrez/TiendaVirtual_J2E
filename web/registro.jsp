@@ -28,10 +28,10 @@
     </head>
     <body>
         <%
-            String errorRegistro = (String) session.getAttribute("registroError");
-            if (errorRegistro != null) {
+            String registro = (String) session.getAttribute("registroMensaje");
+            if (registro != null) {
 
-                out.print(errorRegistro);
+                out.print(registro);
             }
 
         %>

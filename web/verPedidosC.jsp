@@ -95,7 +95,7 @@
             <tr>
                 <td><%=pedidosRec.getInt("id_pedido")%></td>
                 <td><%=pedidosRec.getString("Estado")%></td>
-                <td><%=pedidosRec.getDouble("TOTAL")%></td>
+                <td><%= String.format("%.2f", pedidosRec.getDouble("TOTAL")) %> €</td>
                 <td><%=pedidosRec.getInt("Articulos")%></td>
             </tr>
 

@@ -1,4 +1,6 @@
 <%@page import="modelo.Cesta"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
+
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
@@ -7,7 +9,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Zona de Pago</title>
         <style>
             * {
@@ -88,7 +90,7 @@ and open the template in the editor.
                     {
                         /*Aqui guardamos el total del precio basada en la cantidad ejemplo: 2 libros de alas de sangre en total seran 20, 
                         el precio unitario es de 10 para calcularlo multiplicamos el precio del producto por la cantidad de ejemplares 
-                        a�adidos*/
+                        añadidos*/
                         double totalProducto = cestaGuardada.getArrayProductos().get(i).getPrecio() * cestaGuardada.getArrayProductos().get(i).getCantidad();
                         
                         /*En la variable creada antes del form vamos sumando lo que hay mas la suma anterior, esto nos da el total final*/
@@ -97,9 +99,10 @@ and open the template in the editor.
 
                 <tr>
                     <td><%=cestaGuardada.getArrayProductos().get(i).getTitulo()%></td>
-                    <td><%=cestaGuardada.getArrayProductos().get(i).getPrecio()%></td>
+                    <td><%=String.format("%.2f", cestaGuardada.getArrayProductos().get(i).getPrecio())%> €</td>
                     <td><%=cestaGuardada.getArrayProductos().get(i).getCantidad()%></td>
-                    <td><%=totalProducto%></td>
+                    <td><%= String.format("%.2f", totalProducto) %> €</td>
+
                 </tr>
 
 
@@ -110,7 +113,7 @@ and open the template in the editor.
                        pedidos */
                     session.setAttribute("sumatorio", totalSumatorio);
                 %>
-                <tr>  <td colspan='3'>TOTAL:</td> <td class='total'><%=totalSumatorio%></td> </tr>
+                <tr>  <td colspan='3'>TOTAL:</td> <td class='total'><%=String.format("%.2f", totalSumatorio)%> €</td> </tr>
             </table>
             
             <br>
@@ -121,7 +124,7 @@ and open the template in the editor.
 
         <br><hr>
         <form method="POST" action="ServerControlador">
-            <label for="vueltaCatalogo">�Quieres cambiar algo?</label><br>
+            <label for="vueltaCatalogo">¿Quieres cambiar algo?</label><br>
             <input type="submit" name="enviar" value="Volver al Catalogo" />
 
         </form><br>

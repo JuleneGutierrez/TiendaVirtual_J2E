@@ -72,7 +72,7 @@
                 <option value="enviado">Enviado</option>
                 <option value="reparto">En Reparto</option>
                 <option value="entregado">Entregado</option>
-                <option value="todos">Ver todos</option>
+                <option value="todos" selected>Ver todos</option>
             </select>
             <input type="submit" value="Filtrar estado" name="enviar"/>
 
@@ -113,17 +113,17 @@
                 %>
             </table>
 
-            <br><br><br>
+            <br><hr><br>
 
 
-            <label for="rol">Cambiar a:</label>
-            <select name="rol" id="rol">
+            <label for="estado">Cambiar a:</label>
+            <select name="estado" id="estado">
                 <option value="procesado">Procesado</option>
                 <option value="enviado">Enviado</option>
                 <option value="reparto">En Reparto</option>
                 <option value="entregado">Entregado</option>
             </select>
-            <input type="submit" name="enviar" value="Modificar Rol"> 
+            <input type="submit" name="enviar" value="Modificar Estado"> 
         </form>
 
         <br><hr>

@@ -13,10 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- *
- * @author Julencia
- */
+
 public class Cesta implements Serializable
 {
 

@@ -61,8 +61,16 @@
         </style>
     </head>
     <body>
-        <h1>ESTAS EN CATALOGO</h1>
+        <h1>ESTAS EN VER SOLICITUDES</h1>
         <%
+            
+            String insolicitud = (String) session.getAttribute("mensajeNoSolicitud");
+            if ( insolicitud != null) {
+
+                out.print(insolicitud);
+            }
+
+        
             ArrayList<Solicitud> solicitudes = (ArrayList<Solicitud>) session.getAttribute("solicitudes");
             if (!solicitudes.isEmpty()) {
         %>          

@@ -6,7 +6,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Previsualización</title>
         <style>
             * {
                 font-family: Helvetica, Verdana, sans-serif;
@@ -60,12 +60,11 @@
     <body>
         <h1>ESTAS EN PREVISUALIZACION</h1>
         <%
-            String prueba = (String) session.getAttribute("mensajeCambiarRol");
+            String mensaje = (String) session.getAttribute("mensajeCambiarRolInvitado");
+            if (mensaje != null) {
 
-            String errorRegistro = (String) session.getAttribute("mensajeCambiarRol");%>
-             <p><%=errorRegistro%></p>
-
-            <%
+                out.print(mensaje);
+            }
 
         %>
         <hr>
@@ -87,7 +86,7 @@
             <tr>
                 <td><%=libros.get(i).getTitulo()%></td>
                 <td><%=libros.get(i).getAutor()%></td>
-                <td><%=libros.get(i).getPrecio()%></td>
+                <td><%=String.format("%.2f", libros.get(i).getPrecio())%> €</td>
                 <td><%=libros.get(i).getEditorial()%></td>
             </tr>
 

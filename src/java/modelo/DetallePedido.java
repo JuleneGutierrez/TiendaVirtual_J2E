@@ -1,8 +1,10 @@
 
 package modelo;
 
+import java.io.Serializable;
 
-public class DetallePedido {
+
+public class DetallePedido implements Serializable{
     private Integer idDetallePedido;
     private String tituloPedido;
     private Integer idPedido;

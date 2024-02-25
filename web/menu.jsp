@@ -52,14 +52,13 @@
             <input type="submit" value="EstadoPedido" name="enviar" /><br><br>
         </form>
 
+        <% }%>
         <hr>
         <form method="POST" action="ServerControlador">
             <label for="salida">¿Ya terminaste?</label><br>
             <input type="submit" name="enviar" value="Salir" />
 
         </form><br>
-
-        <% }%>
         <% } else {%> <h3>ACCESO NO PERMITIDO</h3> <%}%>
     </body>
 </html>

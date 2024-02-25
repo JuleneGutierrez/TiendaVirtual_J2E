@@ -28,10 +28,6 @@ import modelo.Producto;
 import modelo.Solicitud;
 
 /*Importamos la clase producto para poder hacer uso de ello*/
-/**
- *
- * @author Julencia
- */
 public class ServerControlador extends HttpServlet {
 
     private static String MENU = "/menu.jsp";
@@ -146,7 +142,8 @@ public class ServerControlador extends HttpServlet {
                         }
 
                     } else {
-                        System.out.println("¡Credenciales INCORRECTAS!");
+                        session.setAttribute("loginMensaje", "¡Credenciales INCORRECTAS!");
+
                         ruta = LOGIN;
 
                     }
@@ -184,10 +181,10 @@ public class ServerControlador extends HttpServlet {
                 /*Utilizamos el metodo creado insertarUsuario y le pasamos por parametro las variables con los datos recogidos del formulario*/
                 boolean comprobante = conexion.insertarUsuario(nombre, apellido, nombreRegistro, contrasena, email, telefono, dni);
                 if (comprobante) {
-
-                    ruta = MENU;
+                    session.setAttribute("registroMensaje", "El usuario " + nombreRegistro + " fue guardado correctamente");
+                    ruta = REGISTRO;
                 } else {
-                    session.setAttribute("registroError", "No se pudo crear el regitro, introduce otro usurio");
+                    session.setAttribute("registroMensaje", "No se pudo crear el regitro, introduce otro usurio");
                     ruta = REGISTRO;
                 }
 
@@ -266,6 +263,7 @@ public class ServerControlador extends HttpServlet {
                 ruta = VER_PEDIDOS_COMPRADOR;
             } //PREVISUALIZACIÓN
             else if ("Salir".equals(botonSeleccionado)) {
+                session.invalidate();
                 ruta = LOGIN;
             } else if ("Cambiar Rol".equals(botonSeleccionado)) {
                 int idUsuario = Integer.parseInt((String) session.getAttribute("id_usuario"));
@@ -273,9 +271,9 @@ public class ServerControlador extends HttpServlet {
                 /*Llamamos al metodo para insertar el pedido pagado del usuario */
                 boolean respuestaInsertarSolicitud = conexion.insertarSolicitud(idUsuario);
                 if (!respuestaInsertarSolicitud) {
-                    request.setAttribute("mensajeCambiarRol", "Su solicitud fue envida");
-                }else{
-                    request.setAttribute("mensajeCambiarRol", "Fallo, ya existe una solicitud pendiente");
+                    request.setAttribute("mensajeCambiarRolInvitado", "Su solicitud fue enviada");
+                } else {
+                    request.setAttribute("mensajeCambiarRolInvitado", "Ya existe una solicitud pendiente");
                 }
                 ruta = PREVISUALIZACION;
 
@@ -289,32 +287,39 @@ public class ServerControlador extends HttpServlet {
 
                 String[] solicitudesSeleccionadas = request.getParameterValues("opciones");
 
-                for (int i = 0; i < solicitudesSeleccionadas.length; i++) {
-                    conexion.modificarRol(solicitudesSeleccionadas[i]);
+                if (solicitudesSeleccionadas != null) {
+                    for (int i = 0; i < solicitudesSeleccionadas.length; i++) {
+                        conexion.modificarRol(solicitudesSeleccionadas[i]);
+                    }
+                } else {
+                    request.setAttribute("mensajeNoSolicitud", "No has seleccionado ninguna solicitud a modificar");
                 }
                 obtenerSolicitudes(conexion, session);
                 ruta = VER_SOLICTUDES;
 
             } else if ("Volver al menu".equals(botonSeleccionado)) {
                 ruta = MENU;
-                
-            } else if ("Volver al Catalogo".equals(botonSeleccionado)){
+
+            } else if ("Volver al Catalogo".equals(botonSeleccionado)) {
                 ruta = CATALOGO;
-            }
-            else if ("Cambiar Estados".equals(botonSeleccionado)) {
+            } else if ("Cambiar Estados".equals(botonSeleccionado)) {
                 //primera vez al entrar
                 String filtro = request.getParameter("opcion");
                 obtenerEstadoPedidos(conexion, session, filtro);
                 ruta = VER_PEDIDOS_VENDEDOR;
-            } else if ("Modificar Rol".equals(botonSeleccionado)) {
+            } else if ("Modificar Estado".equals(botonSeleccionado)) {
                 //obtenemos el filtro actual
                 String filtro = request.getParameter("opcion");
                 //Obtenemos los dedidos marcados
                 String[] pedidosSeleccionados = request.getParameterValues("opciones");
                 //obtenemos el rol a cambiar
-                String rol = request.getParameter("rol");
-                for (int i = 0; i < pedidosSeleccionados.length; i++) {
-                    conexion.modificarEstado(rol, pedidosSeleccionados[i]);
+                String estado = request.getParameter("estado");
+                if (pedidosSeleccionados != null) {
+                    for (int i = 0; i < pedidosSeleccionados.length; i++) {
+                        conexion.modificarEstado(estado, pedidosSeleccionados[i]);
+                    }
+                } else {
+                    request.setAttribute("mensajeModificacion", "No has seleccionado ninguna solicitud a modificar");
                 }
 
                 obtenerEstadoPedidos(conexion, session, filtro);

@@ -5,11 +5,10 @@
  */
 package modelo;
 
-/**
- *
- * @author Julencia
- */
-public class Producto
+import java.io.Serializable;
+
+
+public class Producto implements Serializable
 {
     private String titulo;
     private double precio;
