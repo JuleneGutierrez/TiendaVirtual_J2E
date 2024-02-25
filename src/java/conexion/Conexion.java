@@ -410,7 +410,7 @@ public class Conexion extends HttpServlet {
         try {
             // Consulta SQL parametrizada
             String consultaUsuarioExistente = "SELECT id_usuario FROM solicitudes WHERE id_usuario = ?";
-            String updateSolicitud = " UPDATE solicitudes SET estado='confirmado' WHERE id_usuario=?";
+            String updateSolicitud = " UPDATE solicitudes SET estado='confirmado', fecha_aprobacion=CURDATE() WHERE id_usuario=?";
             String updateUsuario = " UPDATE usuario SET rol='comprador' WHERE id_usuario=?";
             // Verificar si el usuario existe
             preparedStatement = conexion.prepareStatement(consultaUsuarioExistente);
